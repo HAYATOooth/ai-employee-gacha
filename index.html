@@ -76,16 +76,29 @@
 .biz-ssr .c-main{color:#c8bbf5}
 .biz-sr .c-main{color:#a8d5ef}
 @media(max-width:500px){.c-copy{top:27%}.c-candidate{width:min(310px,70vw);height:46%;bottom:18%}.c-quote{bottom:11%}.c-result{width:86vw}.c-result img{height:38vh}}
+
+/* Ver.3.5: real cinematic background */
+.hero{position:relative;min-height:235px;padding:24px 14px 20px;border-radius:24px;overflow:hidden;margin-bottom:12px;background:linear-gradient(180deg,#05070a55,#05070ae8),url("gacha_bg.png") center/cover no-repeat;border:1px solid #ffffff18;box-shadow:0 18px 55px #0009;display:flex;flex-direction:column;justify-content:flex-end}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#05070a55,transparent 35%,transparent 65%,#05070a66);pointer-events:none}.hero>*{position:relative;z-index:1}
+.hero .title{ text-shadow:0 5px 24px #000; }.hero .sub{max-width:460px;margin-left:auto;margin-right:auto;text-shadow:0 3px 12px #000}
+.machine{background:linear-gradient(180deg,#07101a66,#07101ad9),url("gacha_bg.png") center 48%/cover no-repeat;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end;padding-top:150px}
+.machine:before{background:radial-gradient(circle at 50% 34%,#79aaff44,transparent 38%)}
+.capsule{width:116px;height:116px;margin:0 auto 18px;background:radial-gradient(circle at 35% 30%,#fff,#b9d8ff 35%,#4674a8 72%,#17263f);box-shadow:0 0 55px #72b8ff88,inset 0 -12px 20px #14213a;border:1px solid #cfe5ff88}
+.capsule:after{font-size:28px;color:#10213a}
+.cinema-bg{background:linear-gradient(180deg,#03060a55,#03060acc),url("gacha_bg.png") center/cover no-repeat!important}
+.cinema:before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,transparent 0 20%,#02050bd9 72%);pointer-events:none;z-index:0}
+.c-candidate{filter:blur(13px) brightness(.55) drop-shadow(0 20px 35px #000)!important}.c-candidate.visible{filter:blur(4px) brightness(.72) drop-shadow(0 20px 35px #000)!important}.c-candidate.clear{filter:none!important;drop-shadow:none!important}
+.c-screen,.c-copy,.c-progress,.c-time,.c-skip,.c-result,.c-quote,.c-candidate{z-index:2}
 </style></head>
 <body><main class="app">
 <header class="hero"><div class="eyebrow">AI EMPLOYEE GACHA</div><div class="title">AI社員7人ガチャ</div><div class="sub">集めるだけじゃない。社員を働かせて、会社を育てよう。</div></header><button id="soundBtn" class="sound-btn" onclick="toggleSound()">🔊 サウンド ON</button>
 <div class="topbar"><div class="stat"><b id="coins">1,000</b><span>💰 コイン</span></div><div class="stat"><b id="companyLevel">Lv.1</b><span>🏢 会社レベル</span></div><div class="stat"><b id="rate">0%</b><span>📚 収集率</span></div><div class="stat"><b id="pulls">0</b><span>🎯 ガチャ回数</span></div></div>
-<section class="machine"><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.3.3：採用面接から始まる、10秒シネマティック・ガチャ。</div></section>
+<section class="machine"><div style="text-align:center;letter-spacing:.24em;font-size:10px;color:#c4d2e9;margin-bottom:10px;position:relative;z-index:2">AI EMPLOYEE CAPSULE</div><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.3.5：AI採用カプセル・ガチャ。</div></section>
 <section id="result" class="result"><div class="card"><div id="rarity" class="rarity"></div><div id="newBadge" class="new-badge" style="display:none">✨ NEW!</div><img id="resultImg"><div class="info"><div id="resultRole" class="role"></div><div id="resultName" class="name"></div><div id="resultDesc" class="desc"></div><div id="quote" class="quote"></div></div></div></section>
 <section class="panel"><div class="panel-title"><h2>💼 今日の仕事</h2><span class="muted">社員を派遣して報酬GET</span></div><div id="jobs" class="jobs"></div></section>
 <section class="panel"><div class="panel-title"><h2>👥 社員育成</h2><span class="muted">仕事で経験値を貯めよう</span></div><div id="employees" class="employees"></div></section>
 <section class="collection"><div class="section-title"><h2>📚 キャラクター図鑑</h2><span id="collectionText">7人中0人</span></div><div id="grid" class="grid"></div></section>
-<div class="foot">AI社員チーム・Gacha v3.3 / 7 Characters</div></main>
+<div class="foot">AI社員チーム・Gacha v3.5 / 7 Characters</div></main>
 <div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">閉じる</button><h2>✨ 10連結果</h2><div id="tenGrid" class="ten-grid"></div></div></div>
 <div id="detail" class="detail"><div class="detail-box"><button class="detail-close" onclick="closeDetail()">×</button><img id="detailImg"><div class="info"><div id="detailRole" class="role"></div><div id="detailName" class="name"></div><div id="detailDesc" class="desc"></div><div id="detailQuote" class="quote"></div></div></div></div>
 <div id="toast" class="toast"></div><div id="super" class="super"></div>
@@ -158,7 +171,7 @@ renderSoundButton();update();save();
  <button class="c-skip" onclick="finishCinema(true)">スキップ</button>
  <div class="cinema-bg"></div><div class="cinema-dim"></div><div class="cinema-window"><i></i><i></i></div><div class="c-floor"></div><div class="c-table"></div><div id="cDoor" class="c-door"></div><img id="cCandidate" class="c-candidate"><div id="cQuote" class="c-quote"></div><div id="cCandidates" class="c-candidates"></div><div id="cDecision" class="c-decision"><div class="decision-word">FINAL DECISION</div><div class="decision-sub">AI EMPLOYEE MANAGEMENT SYSTEM</div></div>
  <div class="c-person p1"></div><div class="c-person p2"></div><div class="c-person p3"></div><div class="c-person p4"></div>
- <div class="c-screen"><div><div id="cScreenTitle" class="c-screen-title">EXECUTIVE MEETING</div><div id="cScreenSub" class="c-screen-sub">AI EMPLOYEE MANAGEMENT SYSTEM</div></div></div>
+ <div class="c-screen"><div><div id="cScreenTitle" class="c-screen-title">AI EMPLOYEE CAPSULE</div><div id="cScreenSub" class="c-screen-sub">AI EMPLOYEE MANAGEMENT SYSTEM</div></div></div>
  <div id="cCopy" class="c-copy"><div id="cKicker" class="c-kicker">EXECUTIVE MEETING</div><div id="cMain" class="c-main">プロジェクトの責任者を決める。</div><div id="cSub" class="c-sub">会議室のドアが、静かに開く——</div></div>
  <div id="cPulse" class="c-pulse"></div>
  <div id="c10" class="c-10"><div class="c-10-title">10人の候補者、入室。</div><div class="c-10-sub">これからチームが決まります。</div></div>
