@@ -25,3 +25,6 @@ scene_ur.mp4
 1657.png  検品担当
 1658.png  執筆担当
 1659.png  営業担当
+
+
+Ver.3.9: 3D-like rotating capsule machine, orbit rings, premium game-style BGM, richer charge sequence, jackpot hit sound, and upgraded cinematic timing.
