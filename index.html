@@ -225,16 +225,16 @@
 @keyframes vignetteIn{to{opacity:1}}
 @keyframes heroFly{0%{opacity:0;filter:blur(18px) brightness(2);transform:translate(-50%,30%) scale(.35)}35%{opacity:1;filter:blur(5px) brightness(1.8);transform:translate(-50%,-3%) scale(.8)}65%{filter:blur(0) brightness(1.25);transform:translate(-50%,-50%) scale(1.04)}100%{opacity:1;filter:none;transform:translate(-50%,-50%) scale(1)}}
 @keyframes nameImpact{0%{opacity:0;transform:translateX(-50%) scale(.6);filter:blur(8px)}65%{opacity:1;transform:translateX(-50%) scale(1.12);filter:none}100%{opacity:1;transform:translateX(-50%) scale(1)}}
-</style></head>
+.training{margin-top:7px;display:grid;grid-template-columns:1fr 1fr;gap:5px}.training button{border:1px solid #4d63a0;background:#25345d;color:#fff;border-radius:8px;padding:6px;font-size:9px;font-weight:900}.statline{display:flex;justify-content:space-between;font-size:9px;color:#aab6d2}.skill{color:#ffd76a;font-weight:900}@media(max-width:500px){.training button{font-size:8px}} </style></head>
 <body><main class="app">
 <header class="hero"><div class="eyebrow">AI EMPLOYEE GACHA</div><div class="title">AI社員7人ガチャ</div><div class="sub">集めるだけじゃない。社員を働かせて、会社を育てよう。</div></header><button id="soundBtn" class="sound-btn" onclick="toggleSound()">🔊 サウンド ON</button>
 <div class="topbar"><div class="stat"><b id="coins">1,000</b><span>💰 コイン</span></div><div class="stat"><b id="companyLevel">Lv.1</b><span>🏢 会社レベル</span></div><div class="stat"><b id="rate">0%</b><span>📚 収集率</span></div><div class="stat"><b id="pulls">0</b><span>🎯 ガチャ回数</span></div></div>
 <section class="machine"><div style="text-align:center;letter-spacing:.24em;font-size:10px;color:#c4d2e9;margin-bottom:10px;position:relative;z-index:2">AI EMPLOYEE CAPSULE</div><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.4.0：ガチャマシン回転 → カプセル落下 → タップ開封のゲーム演出。</div></section>
 <section id="result" class="result"><div class="card"><div id="rarity" class="rarity"></div><div id="newBadge" class="new-badge" style="display:none">✨ NEW!</div><img id="resultImg"><div class="info"><div id="resultRole" class="role"></div><div id="resultName" class="name"></div><div id="resultDesc" class="desc"></div><div id="quote" class="quote"></div></div></div></section>
 <section class="panel"><div class="panel-title"><h2>💼 今日の仕事</h2><span class="muted">社員を派遣して報酬GET</span></div><div id="jobs" class="jobs"></div></section>
-<section class="panel"><div class="panel-title"><h2>👥 社員育成</h2><span class="muted">仕事で経験値を貯めよう</span></div><div id="employees" class="employees"></div></section>
+<section class="panel"><div class="panel-title"><h2>👥 社員育成</h2><span class="muted">LvUP＋能力強化</span></div><div id="employees" class="employees"></div></section>
 <section class="collection"><div class="section-title"><h2>📚 キャラクター図鑑</h2><span id="collectionText">7人中0人</span></div><div id="grid" class="grid"></div></section>
-<div class="foot">AI社員チーム・Gacha v4.0 / 7 Characters</div></main>
+<div class="foot">AI社員チーム・Gacha v4.3 / 7 Characters</div></main>
 <div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">閉じる</button><h2>✨ 10連結果</h2><div id="tenGrid" class="ten-grid"></div></div></div>
 <div id="detail" class="detail"><div class="detail-box"><button class="detail-close" onclick="closeDetail()">×</button><img id="detailImg"><div class="info"><div id="detailRole" class="role"></div><div id="detailName" class="name"></div><div id="detailDesc" class="desc"></div><div id="detailQuote" class="quote"></div></div></div></div>
 <div id="toast" class="toast"></div><div id="super" class="super"></div>
@@ -249,11 +249,32 @@ const chars=[
 {id:'sales',name:'営業担当',role:'営業担当',rarity:'R',img:'1659.png',desc:'発信と告知を担当し、記事を読者へ届ける。',quote:'「まずは、届けてきます！」',job:'営業・告知',reward:100,xp:25}
 ];
 const OLD='ai_employee_gacha_7_v2',KEY='ai_employee_gacha_7_v3';
-let owned=JSON.parse(localStorage.getItem(KEY+'_owned')||localStorage.getItem(OLD)||'{}');let levels=JSON.parse(localStorage.getItem(KEY+'_levels')||'{}');let coins=Number(localStorage.getItem(KEY+'_coins')||1000);let pulls=Number(localStorage.getItem(KEY+'_pulls')||localStorage.getItem(OLD+'_pulls')||0);let busy=false;
-chars.forEach(c=>{if(!levels[c.id])levels[c.id]={lv:1,xp:0}});
+let owned=JSON.parse(localStorage.getItem(KEY+'_owned')||localStorage.getItem(OLD)||'{}');
+let levels=JSON.parse(localStorage.getItem(KEY+'_levels')||'{}');
+let coins=Number(localStorage.getItem(KEY+'_coins')||1000);
+let pulls=Number(localStorage.getItem(KEY+'_pulls')||localStorage.getItem(OLD+'_pulls')||0);let busy=false;
+const skillNames={president:'経営力',planning:'企画力',research:'分析力',design:'デザイン力',inspection:'品質力',writing:'文章力',sales:'営業力'};
+chars.forEach(c=>{if(!levels[c.id])levels[c.id]={lv:1,xp:0,skill:0};else {levels[c.id].lv??=1;levels[c.id].xp??=0;levels[c.id].skill??=0}});
 function save(){localStorage.setItem(KEY+'_owned',JSON.stringify(owned));localStorage.setItem(KEY+'_levels',JSON.stringify(levels));localStorage.setItem(KEY+'_coins',coins);localStorage.setItem(KEY+'_pulls',pulls)}
-function companyLevel(){let total=Object.values(levels).reduce((s,x)=>s+x.xp+(x.lv-1)*100,0);return 1+Math.floor(total/500)}
+function companyLevel(){let total=Object.values(levels).reduce((s,x)=>s+x.xp+(x.lv-1)*100+x.skill*20,0);return 1+Math.floor(total/500)}
+function rewardFor(c){const x=levels[c.id]||{lv:1,skill:0};return Math.floor(c.reward*(1+(x.lv-1)*.05+x.skill*.02))}
+function xpFor(c){return c.xp+Math.floor((levels[c.id]?.skill||0)*1.5)}
+function renderJobs(){
+ const el=document.getElementById('jobs'); if(!el)return;
+ el.innerHTML=chars.map(c=>{const x=levels[c.id],r=rewardFor(c),xp=xpFor(c);return `<div class="job"><h3>💼 ${c.name} <small>Lv.${x.lv}</small></h3><p>${c.job}<br>報酬：💰 +${r}　EXP +${xp}<br><span class="skill">${skillNames[c.id]} ${x.skill}</span> · LvUPで報酬+5%</p><button onclick="doJob('${c.id}')">仕事をさせる</button></div>`}).join('');
+}
+function renderEmployees(){
+ const el=document.getElementById('employees'); if(!el)return;
+ el.innerHTML=chars.map(c=>{const x=levels[c.id]||{lv:1,xp:0,skill:0};const pct=Math.round(x.xp);const nextCost=100+x.skill*50;const canTrain=x.skill<20;return `<div class="employee"><img src="${c.img}" alt="${c.name}"><h3>${c.name} <small>Lv.${x.lv}</small></h3><div class="statline"><span>EXP ${x.xp}/100</span><span class="skill">${skillNames[c.id]} ${x.skill}</span></div><div class="xp"><i style="width:${pct}%"></i></div><div class="training"><button onclick="trainEmployee('${c.id}')" ${coins<nextCost||!canTrain?'disabled':''}>⬆ 強化 ${nextCost}💰</button><button onclick="doJob('${c.id}')">💼 仕事する</button></div></div>`}).join('');
+}
+function doJob(id){
+ const c=chars.find(x=>x.id===id); if(!c)return;const r=rewardFor(c),xp=xpFor(c);coins+=r;addXp(c,xp);save();update();toast(`💼 ${c.name} が「${c.job}」を完了！ 💰 +${r} / EXP +${xp}`);
+}
+function trainEmployee(id){
+ const c=chars.find(x=>x.id===id);if(!c)return;const x=levels[id];const cost=100+x.skill*50;if(coins<cost){toast('💰 コインが足りません');return}if(x.skill>=20){toast('⭐ この能力は最大です');return}coins-=cost;x.skill++;save();update();tone(880,.12,'triangle',.05);tone(1320,.18,'sine',.04,.08);toast(`⬆ ${c.name} の${skillNames[id]}が ${x.skill} に上がった！`)}
 function update(){const n=Object.keys(owned).length;document.getElementById('coins').textContent=coins.toLocaleString();document.getElementById('companyLevel').textContent='Lv.'+companyLevel();document.getElementById('rate').textContent=Math.round(n/7*100)+'%';document.getElementById('pulls').textContent=pulls;document.getElementById('collectionText').textContent=`7人中${n}人`;renderJobs();renderEmployees();document.getElementById('grid').innerHTML=chars.map(c=>`<div class="mini ${owned[c.id]?'':'locked'}" onclick="openDetail('${c.id}')"><img src="${c.img}" alt="${c.name}"><div class="mini-name">${owned[c.id]?'':'🔒 '}${c.name}</div><div class="mini-role">${c.role} · ${c.rarity}</div></div>`).join('')}
+function addXp(c,amount){let x=levels[c.id];x.xp+=amount;while(x.xp>=100){x.xp-=100;x.lv++;toast(`🎉 ${c.name} がLv.${x.lv}になった！`);}
+}
 function weighted(){const r=Math.random();if(r<.08)return chars.find(c=>c.rarity==='UR');if(r<.25)return chars.filter(c=>c.rarity==='SSR')[Math.floor(Math.random()*2)];if(r<.68)return chars.filter(c=>c.rarity==='SR')[Math.floor(Math.random()*3)];return chars.find(c=>c.rarity==='R')}
 function rarityBg(c){return c.rarity==='UR'?'linear-gradient(135deg,#9d5cff,#ffca58)':c.rarity==='SSR'?'#6a4cff':c.rarity==='SR'?'#1686d9':'#4b5568'}
 function show(c,isNew){document.getElementById('result').classList.add('show');document.getElementById('resultImg').src=c.img;document.getElementById('resultRole').textContent=c.role;document.getElementById('resultName').textContent=c.name;document.getElementById('resultDesc').textContent=c.desc;document.getElementById('quote').textContent=c.quote;let r=document.getElementById('rarity');r.textContent=c.rarity;r.style.background=rarityBg(c);document.getElementById('newBadge').style.display=isNew?'block':'none';if(c.rarity==='UR'){const s=document.getElementById('super');s.classList.remove('show');void s.offsetWidth;s.classList.add('show');setTimeout(()=>s.classList.remove('show'),950)}}
@@ -347,8 +368,9 @@ function applyCinemaResult(){const c=cinemaResult;if(!c)return;const isNew=!owne
 
 function showTenResults(got){const grid=document.getElementById('tenGrid');grid.innerHTML=got.map(x=>`<div class="ten-card"><img src="${x.c.img}"><b>${x.c.rarity} ${x.c.name}</b>${x.isNew?'<div class="ten-new">✨ NEW!</div>':''}<small>${x.c.role}</small></div>`).join('');document.getElementById('modal').classList.add('show');[...grid.children].forEach((el,i)=>setTimeout(()=>el.classList.add('reveal'),i*120));}
 
-function closeModal(){document.getElementById('modal').classList.remove('show')}function openDetail(id){const c=chars.find(x=>x.id===id);document.getElementById('detailImg').src=c.img;document.getElementById('detailRole').textContent=owned[id]?`${c.role} · ${c.rarity}`:'未獲得';document.getElementById('detailName').textContent=owned[id]?`${c.name} / Lv.${levels[id].lv}`:'？？？';document.getElementById('detailDesc').textContent=owned[id]?c.desc:'この社員はまだガチャから獲得していません。';document.getElementById('detailQuote').textContent=owned[id]?`${c.quote}　EXP ${levels[id].xp}/100`:'ガチャを回して入社してもらおう。';document.getElementById('detail').classList.add('show')}function closeDetail(){document.getElementById('detail').classList.remove('show')}function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
+function closeModal(){document.getElementById('modal').classList.remove('show')}function openDetail(id){const c=chars.find(x=>x.id===id);document.getElementById('detailImg').src=c.img;document.getElementById('detailRole').textContent=owned[id]?`${c.role} · ${c.rarity}`:'未獲得';document.getElementById('detailName').textContent=owned[id]?`${c.name} / Lv.${levels[id].lv}`:'？？？';document.getElementById('detailDesc').textContent=owned[id]?c.desc:'この社員はまだガチャから獲得していません。';document.getElementById('detailQuote').textContent=owned[id]?`${c.quote}　Lv.${levels[id].lv} / EXP ${levels[id].xp}/100 / ${skillNames[id]} ${levels[id].skill}`:'ガチャを回して入社してもらおう。';document.getElementById('detail').classList.add('show')}function closeDetail(){document.getElementById('detail').classList.remove('show')}function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
 renderSoundButton();update();save();
+save();update();renderSoundButton();
 </script>
 <div id="cinema" class="cinema">
  <div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div>
