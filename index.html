@@ -263,7 +263,7 @@
 @keyframes antFlash{0%{opacity:0}30%{opacity:.9}100%{opacity:0}}
 @keyframes warningPulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.05)}}
 
-/* Ver.4.6 stability patch */
+/* Ver.4.9 DOM order + cinematic stability patch */
 .cinema{display:none !important;visibility:hidden;pointer-events:none;}
 .cinema.show{display:block !important;visibility:visible;pointer-events:auto;}
 .cinema:not(.show){visibility:hidden !important;pointer-events:none !important;}
@@ -281,6 +281,30 @@
 <div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">閉じる</button><h2>✨ 10連結果</h2><div id="tenGrid" class="ten-grid"></div></div></div>
 <div id="detail" class="detail"><div class="detail-box"><button class="detail-close" onclick="closeDetail()">×</button><img id="detailImg"><div class="info"><div id="detailRole" class="role"></div><div id="detailName" class="name"></div><div id="detailDesc" class="desc"></div><div id="detailQuote" class="quote"></div></div></div></div>
 <div id="toast" class="toast"></div><div id="super" class="super"></div>
+<div id="cinema" class="cinema" style="display:none!important;visibility:hidden;pointer-events:none;"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
+ </div><div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div><div id="anticipationFlash" class="anticipation-flash"></div><div id="reelWarning" class="reel-warning">SPECIAL PATTERN</div><div id="rarityAnticipation" class="rarity-anticipation"><div class="big" id="rarityAntBig"></div><div class="small" id="rarityAntSmall"></div></div>
+ <button class="c-skip" onclick="finishCinema(true)">スキップ</button>
+ <div class="capsule-stage">
+<div class="hatch-vignette"></div><div id="hatchVfx" class="hatch-vfx"><div class="hatch-glow"></div><div class="hatch-beam"></div><div class="hatch-ring"></div><div class="hatch-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="hatch-half top"></div><div class="hatch-half bottom"></div>
+   <div id="gachaRays" class="gacha-rays"></div><div id="gachaBurst" class="gacha-burst"></div>
+   <div class="gacha-machine" id="gachaMachine">
+     <div class="machine-top"><div class="machine-brand">AI EMPLOYEE CAPSULE</div><div class="machine-glow"></div><div class="rotor" id="rotor"><i></i><i></i><i></i></div><div class="machine-neck"></div></div>
+     <div class="machine-tray"></div><div id="physicalCapsule" class="physical-capsule"></div>
+   </div>
+   <div id="gachaOrb" class="gacha-orb"></div>
+   <div id="gachaRarity" class="gacha-rarity"></div><img id="gachaResultImg" class="gacha-result-img">
+   <div id="gachaName" class="gacha-name"></div><div id="gachaSub" class="gacha-sub"></div><div id="gacha10" class="gacha-10"></div>
+   <button id="openHatch" class="open-hatch" onclick="openHatch()">TAP TO OPEN</button><div class="tap-ripple"></div><div class="hatch-caption">TAP TO RELEASE</div>
+ </div>
+ <div class="cinema-bg"></div><div class="cinema-dim"></div><div class="cinema-window"><i></i><i></i></div><div class="c-floor"></div><div class="c-table"></div><div id="cDoor" class="c-door"></div><img id="cCandidate" class="c-candidate"><div id="cQuote" class="c-quote"></div><div id="cCandidates" class="c-candidates"></div><div id="cDecision" class="c-decision"><div class="decision-word">FINAL DECISION</div><div class="decision-sub">AI EMPLOYEE MANAGEMENT SYSTEM</div></div>
+ <div class="c-person p1"></div><div class="c-person p2"></div><div class="c-person p3"></div><div class="c-person p4"></div>
+ <div class="c-screen"><div><div id="cScreenTitle" class="c-screen-title">AI EMPLOYEE CAPSULE</div><div id="cScreenSub" class="c-screen-sub">AI EMPLOYEE MANAGEMENT SYSTEM</div></div></div>
+ <div id="cCopy" class="c-copy"><div id="cKicker" class="c-kicker">EXECUTIVE MEETING</div><div id="cMain" class="c-main">プロジェクトの責任者を決める。</div><div id="cSub" class="c-sub">会議室のドアが、静かに開く——</div></div>
+ <div id="cPulse" class="c-pulse"></div>
+ <div id="c10" class="c-10"><div class="c-10-title">10人の候補者、入室。</div><div class="c-10-sub">これからチームが決まります。</div></div>
+ <div id="cResult" class="c-result"><img id="cImg"><div class="c-info"><div id="cRarity" class="c-rarity"></div><div id="cName" class="c-name"></div><div id="cMsg" class="c-message"></div></div><div id="cStamp" class="c-stamp">APPROVED</div></div>
+ <div class="c-progress"><b id="cProgressBar"></b></div><div id="cTime" class="c-time">00.0 / 12.0</div>
+</div>
 <script>
 const chars=[
 {id:'president',name:'社長',role:'社長（あなた）',rarity:'UR',img:'1641.png',desc:'チームの最終判断を担う。7人目としてガチャに正式参戦。',quote:'「全員、仕事を始めよう。」',job:'経営判断',reward:180,xp:40},
@@ -486,28 +510,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   }catch(e){console.error('AI Employee Gacha init error',e)}
 });
 </script>
-<div id="cinema" class="cinema" style="display:none!important;visibility:hidden;pointer-events:none;"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
- </div><div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div><div id="anticipationFlash" class="anticipation-flash"></div><div id="reelWarning" class="reel-warning">SPECIAL PATTERN</div><div id="rarityAnticipation" class="rarity-anticipation"><div class="big" id="rarityAntBig"></div><div class="small" id="rarityAntSmall"></div></div>
- <button class="c-skip" onclick="finishCinema(true)">スキップ</button>
- <div class="capsule-stage">
-<div class="hatch-vignette"></div><div id="hatchVfx" class="hatch-vfx"><div class="hatch-glow"></div><div class="hatch-beam"></div><div class="hatch-ring"></div><div class="hatch-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="hatch-half top"></div><div class="hatch-half bottom"></div>
-   <div id="gachaRays" class="gacha-rays"></div><div id="gachaBurst" class="gacha-burst"></div>
-   <div class="gacha-machine" id="gachaMachine">
-     <div class="machine-top"><div class="machine-brand">AI EMPLOYEE CAPSULE</div><div class="machine-glow"></div><div class="rotor" id="rotor"><i></i><i></i><i></i></div><div class="machine-neck"></div></div>
-     <div class="machine-tray"></div><div id="physicalCapsule" class="physical-capsule"></div>
-   </div>
-   <div id="gachaOrb" class="gacha-orb"></div>
-   <div id="gachaRarity" class="gacha-rarity"></div><img id="gachaResultImg" class="gacha-result-img">
-   <div id="gachaName" class="gacha-name"></div><div id="gachaSub" class="gacha-sub"></div><div id="gacha10" class="gacha-10"></div>
-   <button id="openHatch" class="open-hatch" onclick="openHatch()">TAP TO OPEN</button><div class="tap-ripple"></div><div class="hatch-caption">TAP TO RELEASE</div>
- </div>
- <div class="cinema-bg"></div><div class="cinema-dim"></div><div class="cinema-window"><i></i><i></i></div><div class="c-floor"></div><div class="c-table"></div><div id="cDoor" class="c-door"></div><img id="cCandidate" class="c-candidate"><div id="cQuote" class="c-quote"></div><div id="cCandidates" class="c-candidates"></div><div id="cDecision" class="c-decision"><div class="decision-word">FINAL DECISION</div><div class="decision-sub">AI EMPLOYEE MANAGEMENT SYSTEM</div></div>
- <div class="c-person p1"></div><div class="c-person p2"></div><div class="c-person p3"></div><div class="c-person p4"></div>
- <div class="c-screen"><div><div id="cScreenTitle" class="c-screen-title">AI EMPLOYEE CAPSULE</div><div id="cScreenSub" class="c-screen-sub">AI EMPLOYEE MANAGEMENT SYSTEM</div></div></div>
- <div id="cCopy" class="c-copy"><div id="cKicker" class="c-kicker">EXECUTIVE MEETING</div><div id="cMain" class="c-main">プロジェクトの責任者を決める。</div><div id="cSub" class="c-sub">会議室のドアが、静かに開く——</div></div>
- <div id="cPulse" class="c-pulse"></div>
- <div id="c10" class="c-10"><div class="c-10-title">10人の候補者、入室。</div><div class="c-10-sub">これからチームが決まります。</div></div>
- <div id="cResult" class="c-result"><img id="cImg"><div class="c-info"><div id="cRarity" class="c-rarity"></div><div id="cName" class="c-name"></div><div id="cMsg" class="c-message"></div></div><div id="cStamp" class="c-stamp">APPROVED</div></div>
- <div class="c-progress"><b id="cProgressBar"></b></div><div id="cTime" class="c-time">00.0 / 12.0</div>
-</div>
+
 </body></html>
