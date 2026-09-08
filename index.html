@@ -262,6 +262,12 @@
 @keyframes anticipateIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 @keyframes antFlash{0%{opacity:0}30%{opacity:.9}100%{opacity:0}}
 @keyframes warningPulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.05)}}
+
+/* Ver.4.6 stability patch */
+.cinema{display:none !important;visibility:hidden;pointer-events:none;}
+.cinema.show{display:block !important;visibility:visible;pointer-events:auto;}
+.cinema:not(.show){visibility:hidden !important;pointer-events:none !important;}
+.cinema.show .scene-video{visibility:visible;}
 </style></head>
 <body><main class="app">
 <header class="hero"><div class="eyebrow">AI EMPLOYEE GACHA</div><div class="title">AI社員7人ガチャ</div><div class="sub">集めるだけじゃない。社員を働かせて、会社を育てよう。</div></header><button id="soundBtn" class="sound-btn" onclick="toggleSound()">🔊 サウンド ON</button>
@@ -358,19 +364,41 @@ function resetGachaVisual(){
 function rarityClass(c){return c.rarity==='UR'?'biz-ur':c.rarity==='SSR'?'biz-ssr':c.rarity==='SR'?'biz-sr':'biz-r'}
 function rarityColor(c){return c.rarity==='UR'?'#ffd45c':c.rarity==='SSR'?'#b58cff':c.rarity==='SR'?'#62baff':'#d8e2f5'}
 function startCinema(num){
- initAudio();tone(120,.22,'triangle',.045);playBgm();playMachineStart();cinemaMode=num;cinemaResult=null;cinemaStart=performance.now();openReady=false;clearCinemaTimers();
- const o=document.getElementById('cinema');o.className='cinema show';o.classList.remove('biz-ur','biz-ssr','biz-sr','biz-r','scene-purple','scene-gold','scene-ur','hatch-open');setScene('city');resetGachaVisual();
- document.getElementById('cProgressBar').style.width='0%';document.getElementById('cTime').textContent='00.0 / 12.0';
- if(num===10)prepareCandidates();else cinemaResult=weighted();
- requestAnimationFrame(()=>{document.getElementById('gachaMachine').classList.remove('hidden');document.getElementById('physicalCapsule').classList.add('ready');});
- cinemaTimer=setInterval(updateCinemaClock,50);
- cinemaTimeouts.push(setTimeout(()=>gachaStage(1),1400));
- cinemaTimeouts.push(setTimeout(()=>gachaStage(2),3000));
- cinemaTimeouts.push(setTimeout(()=>gachaStage(3),5200));
- cinemaTimeouts.push(setTimeout(()=>gachaStage(4),7200));
- cinemaTimeouts.push(setTimeout(()=>gachaStage(5),8500));
- cinemaTimeouts.push(setTimeout(()=>prepareOpen(),10200));
+  const o=document.getElementById('cinema');
+  try{
+    clearCinemaTimers();
+    cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
+    resetGachaVisual();
+    o.className='cinema';
+    o.classList.add('show');
+    setScene('city');
+    document.getElementById('cProgressBar').style.width='0%';
+    document.getElementById('cTime').textContent='00.0 / 12.0';
+    initAudio();
+    if(soundOn){ tone(120,.22,'triangle',.045); playMachineStart(); playBgm(); }
+    if(num===10) prepareCandidates(); else cinemaResult=weighted();
+    setBusy(true);
+    requestAnimationFrame(()=>{
+      const gm=document.getElementById('gachaMachine'), pc=document.getElementById('physicalCapsule');
+      if(gm) gm.classList.remove('hidden');
+      if(pc) pc.classList.add('ready');
+    });
+    cinemaTimer=setInterval(updateCinemaClock,50);
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(1),1200));
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(2),2800));
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(3),5000));
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(4),7000));
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(5),8500));
+    cinemaTimeouts.push(setTimeout(()=>{if(!openReady && o.classList.contains('show')) gachaStage(5)},9800));
+  }catch(err){
+    console.error('Gacha start error:',err);
+    clearCinemaTimers();
+    o.classList.remove('show');
+    setBusy(false);
+    try{toast('ガチャ演出を開始できませんでした。もう一度お試しください。')}catch(e){}
+  }
 }
+
 function updateCinemaClock(){const elapsed=Math.min(12000,performance.now()-cinemaStart);document.getElementById('cProgressBar').style.width=(elapsed/12000*100)+'%';document.getElementById('cTime').textContent=(elapsed/1000).toFixed(1)+' / 12.0'}
 
 function rarityAnticipation(c){
@@ -428,7 +456,8 @@ function gachaRevealFinal(){
 }
 function finishCinema(skipped){
  clearCinemaTimers();const o=document.getElementById('cinema');
- if(skipped){o.classList.remove('show');applyCinemaResult();setBusy(false);return}
+ if(skipped){o.classList.remove('show'); openReady=false;}
+ if(skipped){applyCinemaResult();setBusy(false);return}
  updateCinemaClock();
  if(cinemaMode===10){const got=cinemaGot||[];got.forEach(x=>{x.isNew=!owned[x.c.id];owned[x.c.id]=true;addXp(x.c,x.isNew?10:18)});pulls+=10;save();update();setTimeout(()=>{o.classList.remove('show');showTenResults(got);setBusy(false)},120);return}
  const c=cinemaResult,isNew=!owned[c.id];pulls++;owned[c.id]=true;addXp(c,isNew?10:18);save();update();
@@ -442,6 +471,9 @@ function showTenResults(got){const grid=document.getElementById('tenGrid');grid.
 function closeModal(){document.getElementById('modal').classList.remove('show')}function openDetail(id){const c=chars.find(x=>x.id===id);document.getElementById('detailImg').src=c.img;document.getElementById('detailRole').textContent=owned[id]?`${c.role} · ${c.rarity}`:'未獲得';document.getElementById('detailName').textContent=owned[id]?`${c.name} / Lv.${levels[id].lv}`:'？？？';document.getElementById('detailDesc').textContent=owned[id]?c.desc:'この社員はまだガチャから獲得していません。';document.getElementById('detailQuote').textContent=owned[id]?`${c.quote}　Lv.${levels[id].lv} / EXP ${levels[id].xp}/100 / ${skillNames[id]} ${levels[id].skill}`:'ガチャを回して入社してもらおう。';document.getElementById('detail').classList.add('show')}function closeDetail(){document.getElementById('detail').classList.remove('show')}function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
 renderSoundButton();update();save();
 save();update();renderSoundButton();
+
+// Ver.4.6: guarantee cinematic layer starts hidden on page load.
+document.getElementById('cinema')?.classList.remove('show');
 </script>
 <div id="cinema" class="cinema"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
  </div><div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div><div id="anticipationFlash" class="anticipation-flash"></div><div id="reelWarning" class="reel-warning">SPECIAL PATTERN</div><div id="rarityAnticipation" class="rarity-anticipation"><div class="big" id="rarityAntBig"></div><div class="small" id="rarityAntSmall"></div></div>
