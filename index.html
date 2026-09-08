@@ -353,7 +353,7 @@ function playReveal(c){sweep(c.rarity==='UR'?500:320,c.rarity==='UR'?2600:1500,c
 function hitFlash(){const f=document.getElementById('cinemaFlash');if(!f)return;f.classList.remove('hit');void f.offsetWidth;f.classList.add('hit')}
 function setScene(kind){const o=document.getElementById('cinema');o.classList.remove('scene-purple','scene-gold','scene-ur');const all=[document.getElementById('sceneCity'),document.getElementById('scenePurple'),document.getElementById('sceneGold'),document.getElementById('sceneUR')];all.forEach(v=>v&&v.classList.remove('active'));let v=kind==='purple'?document.getElementById('scenePurple'):kind==='gold'?document.getElementById('sceneGold'):kind==='ur'?document.getElementById('sceneUR'):document.getElementById('sceneCity');if(v){v.classList.add('active');try{v.currentTime=(kind==='gold'?.45:kind==='purple'?.2:kind==='ur'?0:0);v.play().catch(()=>{});}catch(e){}}if(kind==='purple')o.classList.add('scene-purple');if(kind==='gold')o.classList.add('scene-gold');if(kind==='ur')o.classList.add('scene-ur')}
 function toggleSound(){soundOn=!soundOn;localStorage.setItem('ai_employee_gacha_sound',soundOn?'on':'off');document.getElementById('soundBtn').textContent=soundOn?'🔊 サウンド ON':'🔇 サウンド OFF';document.getElementById('soundBtn').classList.toggle('off',!soundOn);if(soundOn){initAudio();tone(660,.12,'sine',.04)}}
-function renderSoundButton(){const b=document.getElementById('soundBtn');b.textContent=soundOn?'🔊 サウンド ON':'🔇 サウンド OFF';b.classList.toggle('off',!soundOn)}
+function renderSoundButton(){const b=document.getElementById('soundBtn');if(!b)return;b.textContent=soundOn?'🔊 サウンド ON':'🔇 サウンド OFF';b.classList.toggle('off',!soundOn)}
 function clearCinemaTimers(){cinemaTimeouts.forEach(clearTimeout);cinemaTimeouts=[];clearInterval(cinemaTimer);stopBgm()}
 function prepareCandidates(){const box=document.getElementById('cCandidates');box.innerHTML='';if(cinemaMode!==10){box.classList.remove('show');return}cinemaGot=[];for(let i=0;i<10;i++){const c=weighted();cinemaGot.push({c,isNew:!owned[c.id]});const d=document.createElement('div');d.className='cand-chip '+c.rarity.toLowerCase();d.innerHTML=`<img src="${c.img}" alt="">`;d.style.animationDelay=(i*.13)+'s';box.appendChild(d)}box.classList.remove('show')}
 function resetGachaVisual(){
@@ -370,9 +370,7 @@ function startCinema(num){
     cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
     resetGachaVisual();
     o.className='cinema';
-    o.style.setProperty('display','block','important');
-    o.style.setProperty('visibility','visible','important');
-    o.style.setProperty('pointer-events','auto','important');
+    o.style.setProperty('display','block','important');o.style.setProperty('visibility','visible','important');o.style.setProperty('pointer-events','auto','important');
     o.classList.add('show');
     setScene('city');
     document.getElementById('cProgressBar').style.width='0%';
@@ -396,19 +394,13 @@ function startCinema(num){
   }catch(err){
     console.error('Gacha start error:',err);
     clearCinemaTimers();
-    o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');
+    o.classList.remove('show');
     setBusy(false);
     try{toast('ガチャ演出を開始できませんでした。もう一度お試しください。')}catch(e){}
   }
 }
 
-function updateCinemaClock(){
-  const o=document.getElementById('cinema'),bar=document.getElementById('cProgressBar'),tm=document.getElementById('cTime');
-  if(!o||!o.classList.contains('show')) return;
-  const elapsed=Math.max(0,Math.min(12000,performance.now()-cinemaStart));
-  if(bar) bar.style.width=(elapsed/12000*100)+'%';
-  if(tm) tm.textContent=(elapsed/1000).toFixed(1)+' / 12.0';
-}
+function updateCinemaClock(){const o=document.getElementById('cinema');if(!o||!o.classList.contains('show'))return;const elapsed=Math.max(0,Math.min(12000,performance.now()-cinemaStart));const b=document.getElementById('cProgressBar'),t=document.getElementById('cTime');if(b)b.style.width=(elapsed/12000*100)+'%';if(t)t.textContent=(elapsed/1000).toFixed(1)+' / 12.0'}
 
 function rarityAnticipation(c){
  const o=document.getElementById('cinema'),ant=document.getElementById('rarityAnticipation'),big=document.getElementById('rarityAntBig'),small=document.getElementById('rarityAntSmall'),w=document.getElementById('reelWarning'),f=document.getElementById('anticipationFlash');
@@ -465,7 +457,7 @@ function gachaRevealFinal(){
 }
 function finishCinema(skipped){
  clearCinemaTimers();const o=document.getElementById('cinema');
- if(skipped){o.classList.remove('show'); openReady=false;}
+ if(skipped){o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');openReady=false;}
  if(skipped){applyCinemaResult();setBusy(false);return}
  updateCinemaClock();
  if(cinemaMode===10){const got=cinemaGot||[];got.forEach(x=>{x.isNew=!owned[x.c.id];owned[x.c.id]=true;addXp(x.c,x.isNew?10:18)});pulls+=10;save();update();setTimeout(()=>{o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');showTenResults(got);setBusy(false)},120);return}
@@ -478,17 +470,21 @@ function applyCinemaResult(){const c=cinemaResult;if(!c)return;const isNew=!owne
 function showTenResults(got){const grid=document.getElementById('tenGrid');grid.innerHTML=got.map(x=>`<div class="ten-card"><img src="${x.c.img}"><b>${x.c.rarity} ${x.c.name}</b>${x.isNew?'<div class="ten-new">✨ NEW!</div>':''}<small>${x.c.role}</small></div>`).join('');document.getElementById('modal').classList.add('show');[...grid.children].forEach((el,i)=>setTimeout(()=>el.classList.add('reveal'),i*120));}
 
 function closeModal(){document.getElementById('modal').classList.remove('show')}function openDetail(id){const c=chars.find(x=>x.id===id);document.getElementById('detailImg').src=c.img;document.getElementById('detailRole').textContent=owned[id]?`${c.role} · ${c.rarity}`:'未獲得';document.getElementById('detailName').textContent=owned[id]?`${c.name} / Lv.${levels[id].lv}`:'？？？';document.getElementById('detailDesc').textContent=owned[id]?c.desc:'この社員はまだガチャから獲得していません。';document.getElementById('detailQuote').textContent=owned[id]?`${c.quote}　Lv.${levels[id].lv} / EXP ${levels[id].xp}/100 / ${skillNames[id]} ${levels[id].skill}`:'ガチャを回して入社してもらおう。';document.getElementById('detail').classList.add('show')}function closeDetail(){document.getElementById('detail').classList.remove('show')}function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
-renderSoundButton();update();save();
-save();update();renderSoundButton();
-
-// Ver.4.6: guarantee cinematic layer starts hidden on page load.
-document.getElementById('cinema')?.classList.remove('show');
-  const _cinemaBoot=document.getElementById('cinema');
-  if(_cinemaBoot){
-    _cinemaBoot.style.setProperty('display','none','important');
-    _cinemaBoot.style.setProperty('visibility','hidden','important');
-    _cinemaBoot.style.setProperty('pointer-events','none','important');
-  }
+// Ver.4.8: initialize only after the full DOM (including the cinematic layer) exists.
+document.addEventListener('DOMContentLoaded',()=>{
+  try{
+    const cinema=document.getElementById('cinema');
+    if(cinema){
+      cinema.classList.remove('show');
+      cinema.style.setProperty('display','none','important');
+      cinema.style.setProperty('visibility','hidden','important');
+      cinema.style.setProperty('pointer-events','none','important');
+    }
+    renderSoundButton();
+    update();
+    save();
+  }catch(e){console.error('AI Employee Gacha init error',e)}
+});
 </script>
 <div id="cinema" class="cinema" style="display:none!important;visibility:hidden;pointer-events:none;"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
  </div><div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div><div id="anticipationFlash" class="anticipation-flash"></div><div id="reelWarning" class="reel-warning">SPECIAL PATTERN</div><div id="rarityAnticipation" class="rarity-anticipation"><div class="big" id="rarityAntBig"></div><div class="small" id="rarityAntSmall"></div></div>
