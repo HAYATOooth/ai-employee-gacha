@@ -263,7 +263,7 @@
 @keyframes antFlash{0%{opacity:0}30%{opacity:.9}100%{opacity:0}}
 @keyframes warningPulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.05)}}
 
-/* Ver.5.0 runtime guard: cinematic layer can only appear after an explicit pull */
+/* Ver.5.1 hard reset: cinematic layer is forcibly hidden on every page lifecycle event */
 .cinema{display:none !important;visibility:hidden;pointer-events:none;}.cinema.cinema-active{display:block !important;visibility:visible !important;pointer-events:auto !important;}
 .cinema.show{display:none !important;visibility:hidden !important;pointer-events:none !important;}
 .cinema:not(.cinema-active){display:none !important;visibility:hidden !important;pointer-events:none !important;}
@@ -509,15 +509,23 @@ document.addEventListener('DOMContentLoaded',()=>{
     save();
   }catch(e){console.error('AI Employee Gacha init error',e)}
 });
-window.addEventListener('pageshow',()=>{
+function hardResetCinema(){
   const cinema=document.getElementById('cinema');
-  if(cinema && !cinema.classList.contains('cinema-active')){
-    cinema.classList.remove('show');
-    cinema.style.setProperty('display','none','important');
-    cinema.style.setProperty('visibility','hidden','important');
-    cinema.style.setProperty('pointer-events','none','important');
-  }
-});
+  if(!cinema)return;
+  clearCinemaTimers();
+  cinema.classList.remove('show','cinema-active','hatch-open','door-phase','scene-purple','scene-gold','scene-ur','rarity-ur','rarity-ssr','rarity-sr');
+  cinema.style.setProperty('display','none','important');
+  cinema.style.setProperty('visibility','hidden','important');
+  cinema.style.setProperty('pointer-events','none','important');
+  const open=document.getElementById('openHatch');
+  if(open)open.classList.remove('ready');
+  openReady=false;
+}
+window.addEventListener('DOMContentLoaded',hardResetCinema);
+window.addEventListener('load',hardResetCinema);
+window.addEventListener('pageshow',hardResetCinema);
+window.addEventListener('pagehide',hardResetCinema);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')hardResetCinema()});
 </script>
 
 </body></html>
