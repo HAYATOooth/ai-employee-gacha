@@ -225,7 +225,44 @@
 @keyframes vignetteIn{to{opacity:1}}
 @keyframes heroFly{0%{opacity:0;filter:blur(18px) brightness(2);transform:translate(-50%,30%) scale(.35)}35%{opacity:1;filter:blur(5px) brightness(1.8);transform:translate(-50%,-3%) scale(.8)}65%{filter:blur(0) brightness(1.25);transform:translate(-50%,-50%) scale(1.04)}100%{opacity:1;filter:none;transform:translate(-50%,-50%) scale(1)}}
 @keyframes nameImpact{0%{opacity:0;transform:translateX(-50%) scale(.6);filter:blur(8px)}65%{opacity:1;transform:translateX(-50%) scale(1.12);filter:none}100%{opacity:1;transform:translateX(-50%) scale(1)}}
-.training{margin-top:7px;display:grid;grid-template-columns:1fr 1fr;gap:5px}.training button{border:1px solid #4d63a0;background:#25345d;color:#fff;border-radius:8px;padding:6px;font-size:9px;font-weight:900}.statline{display:flex;justify-content:space-between;font-size:9px;color:#aab6d2}.skill{color:#ffd76a;font-weight:900}@media(max-width:500px){.training button{font-size:8px}} </style></head>
+.training{margin-top:7px;display:grid;grid-template-columns:1fr 1fr;gap:5px}.training button{border:1px solid #4d63a0;background:#25345d;color:#fff;border-radius:8px;padding:6px;font-size:9px;font-weight:900}.statline{display:flex;justify-content:space-between;font-size:9px;color:#aab6d2}.skill{color:#ffd76a;font-weight:900}@media(max-width:500px){.training button{font-size:8px}} 
+/* Ver.4.4: flashy business pachislot-style cinematic presentation */
+.gacha-neon{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.gacha-neon:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 9%,#5ce1ff08 9.2% 9.35%,transparent 9.5% 18%),linear-gradient(180deg,#07111f55,#09001488 52%,#000000aa);mix-blend-mode:screen}
+.neon-bar{position:absolute;height:2px;left:5%;right:5%;background:linear-gradient(90deg,transparent,#20d9ff,#fff,#ff4fd8,#ffd35c,transparent);box-shadow:0 0 18px #20d9ff;opacity:.5}
+.neon-bar.b1{top:14%}.neon-bar.b2{top:82%;animation:neonMove 1.4s linear infinite}.neon-bar.b3{top:91%;opacity:.25}
+.biz-hud{position:absolute;z-index:16;left:50%;top:7%;transform:translateX(-50%);width:min(720px,92vw);display:flex;justify-content:space-between;gap:8px;opacity:.9;pointer-events:none}
+.biz-hud span{padding:7px 10px;border:1px solid #ffffff2c;background:#07101dd9;border-radius:8px;font-size:9px;letter-spacing:.18em;color:#cfe9ff;box-shadow:0 0 18px #00bfff1c}
+.biz-hud .hot{color:#ffd86a;border-color:#ffd86a55;box-shadow:0 0 22px #ffd86a22}
+.biz-reels{position:absolute;z-index:17;left:50%;top:25%;transform:translateX(-50%);display:flex;gap:7px;opacity:0;pointer-events:none}
+.biz-reels.on{animation:reelIn .5s ease forwards}
+.biz-reel{width:72px;height:50px;border:2px solid #b7d7ff66;border-radius:8px;background:linear-gradient(#07101d,#15263d);display:grid;place-items:center;font-size:10px;font-weight:1000;letter-spacing:.12em;color:#fff;box-shadow:inset 0 0 18px #37cfff14,0 0 18px #20cfff14}
+.biz-reel.hot{color:#ffd75c;border-color:#ffd75c88;box-shadow:0 0 24px #ffd75c33}
+.cinema.door-phase .cinema-bg{filter:saturate(1.25) contrast(1.08)}
+.cinema.door-phase .c-door{box-shadow:0 0 25px #22d7ff44,0 0 120px #22d7ff18;animation:doorPulse 1s ease-in-out infinite}
+.cinema.scene-purple .gacha-neon .neon-bar{background:linear-gradient(90deg,transparent,#9c5cff,#ff5ad9,#fff,transparent);box-shadow:0 0 22px #9c5cff}
+.cinema.scene-gold .gacha-neon .neon-bar,.cinema.scene-ur .gacha-neon .neon-bar{background:linear-gradient(90deg,transparent,#ff8a00,#ffe36a,#fff,transparent);box-shadow:0 0 25px #ffd45c}
+@keyframes neonMove{0%{transform:translateX(-5%);opacity:.1}50%{opacity:.7}100%{transform:translateX(5%);opacity:.1}}
+@keyframes reelIn{from{opacity:0;transform:translateX(-50%) translateY(-12px) scale(.8)}to{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}}
+@keyframes doorPulse{50%{filter:brightness(1.4)}}
+@media(max-width:520px){.biz-hud span{font-size:7px;padding:6px 7px}.biz-reel{width:62px;height:44px;font-size:8px}}
+
+
+/* Ver.4.5: rarity-specific pachislot-style anticipation */
+.rarity-anticipation{position:absolute;inset:0;z-index:16;display:none;pointer-events:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;letter-spacing:.16em;font-weight:1000;text-shadow:0 0 20px currentColor,0 0 45px currentColor}
+.rarity-anticipation.on{display:flex;animation:anticipateIn .35s ease-out}
+.rarity-anticipation .big{font-size:clamp(30px,10vw,72px);line-height:1}.rarity-anticipation .small{font-size:11px;margin-top:10px;opacity:.9}
+.rarity-anticipation.sr{color:#55c7ff}.rarity-anticipation.ssr{color:#d58cff}.rarity-anticipation.ur{color:#ffe16a}
+.cinema.rarity-ur{background:#05030a}.cinema.rarity-ur .scene-videos.active{filter:saturate(1.55) brightness(1.08)}
+.cinema.rarity-ssr .scene-videos.active{filter:saturate(1.4) hue-rotate(8deg) brightness(1.03)}
+.cinema.rarity-sr .scene-videos.active{filter:saturate(1.25) brightness(1.05)}
+.anticipation-flash{position:absolute;inset:0;z-index:15;pointer-events:none;opacity:0;background:#fff}.anticipation-flash.on{animation:antFlash .38s ease-out}
+.reel-warning{position:absolute;left:50%;top:15%;transform:translateX(-50%);z-index:17;display:none;padding:7px 15px;border:1px solid #ffffff66;border-radius:999px;background:#05070dcc;font-size:10px;font-weight:1000;letter-spacing:.22em;box-shadow:0 0 25px #ffffff22}
+.reel-warning.on{display:block;animation:warningPulse .5s infinite alternate}.reel-warning.ur{color:#ffe36b;border-color:#ffe36b88;box-shadow:0 0 35px #ffd45c55}.reel-warning.ssr{color:#d58cff;border-color:#d58cff77}.reel-warning.sr{color:#55c7ff;border-color:#55c7ff77}
+@keyframes anticipateIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+@keyframes antFlash{0%{opacity:0}30%{opacity:.9}100%{opacity:0}}
+@keyframes warningPulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.05)}}
+</style></head>
 <body><main class="app">
 <header class="hero"><div class="eyebrow">AI EMPLOYEE GACHA</div><div class="title">AI社員7人ガチャ</div><div class="sub">集めるだけじゃない。社員を働かせて、会社を育てよう。</div></header><button id="soundBtn" class="sound-btn" onclick="toggleSound()">🔊 サウンド ON</button>
 <div class="topbar"><div class="stat"><b id="coins">1,000</b><span>💰 コイン</span></div><div class="stat"><b id="companyLevel">Lv.1</b><span>🏢 会社レベル</span></div><div class="stat"><b id="rate">0%</b><span>📚 収集率</span></div><div class="stat"><b id="pulls">0</b><span>🎯 ガチャ回数</span></div></div>
@@ -297,12 +334,12 @@ function playHatchClick(c){musicKick();tone(160,.08,'square',.035,.02);tone(320,
 function playHatchBurst(c){if(!soundOn)return;noise(.16,.09,.0);tone(58,.55,'sine',.11,.02);sweep(c?.rarity==='UR'?180:130,c?.rarity==='UR'?3600:1900,1.05,c?.rarity==='UR'?.14:.085,.04,'sawtooth');[261.63,329.63,392,523.25,659.25].forEach((f,i)=>tone(f,.55,'triangle',c?.rarity==='UR'?.065:.04,.12+i*.07));if(c?.rarity==='UR'){[783.99,1046.5,1318.5,1567.98].forEach((f,i)=>tone(f,.7,'sine',.055,.42+i*.08));}}
 function playBgm(){if(!soundOn)return;stopBgm();const scales=[[73.42,87.31,110,130.81,164.81],[65.41,82.41,98,123.47,146.83],[82.41,98,123.47,146.83,164.81],[73.42,92.5,110,138.59,184.99]];let step=0;const bar=()=>{if(!soundOn)return;const p=scales[step%scales.length];tone(p[0],.8,'sine',.014);tone(p[1],.42,'triangle',.014,.18);tone(p[2],.32,'square',.012,.36);tone(p[3],.5,'triangle',.014,.54);tone(p[4],.75,'sine',.018,.72);for(let i=0;i<8;i++){tone(p[(i+step)%p.length]*2,.09,'square',.008,i*.12)}if(step%2===0)musicKick(.02);step++};bar();bgmTimer=setInterval(bar,960)}
 function stopBgm(){if(bgmTimer){clearInterval(bgmTimer);bgmTimer=null}}
-function playCharge(){sweep(95,420,.65,.045);sweep(180,1500,.9,.065,.38);sweep(260,2400,.75,.045,1.05,'triangle');for(let i=0;i<4;i++)tone(180+i*42,.11,'square',.018,1.15+i*.13)}
-function playMachineStart(){sweep(70,180,.42,.045);for(let i=0;i<8;i++)tone(90+i*28,.08,'square',.018,i*.11);noise(.12,.025,.4)}
-function playRotor(){for(let i=0;i<6;i++){tone(130+i*55,.09,'sawtooth',.018,i*.12)}sweep(120,900,.65,.05,.1)}
+function playCharge(){sweep(70,520,.7,.06,'sawtooth');sweep(140,1900,1.05,.075,.35,'sawtooth');sweep(260,4200,.9,.09,1.02,'triangle');for(let i=0;i<8;i++)tone(220+i*55,.09,'square',.02,1.08+i*.09);musicKick(.05);musicKick(.52)}
+function playMachineStart(){sweep(55,220,.5,.06,'sawtooth');for(let i=0;i<12;i++)tone(75+i*34,.07,'square',.022,i*.075);tone(110,.3,'sine',.04,.05);noise(.16,.035,.42)}
+function playRotor(){for(let i=0;i<10;i++){tone(120+i*42,.065,'square',.022,i*.075)}sweep(100,1200,.72,.065,.08,'sawtooth');musicKick(.1);musicKick(.42)}
 function playDrop(){sweep(650,95,.5,.06);noise(.18,.06,.12);tone(58,.45,'sine',.08,.42)}
 function playOpen(c){if(c?.rarity==='UR'){sweep(220,3600,1.2,.12);[523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>tone(f,.7,'sine',.06,.18+i*.09));noise(.3,.08,.2)}else{const base=c?.rarity==='SSR'?440:c?.rarity==='SR'?330:262;[base,base*1.25,base*1.5].forEach((f,i)=>tone(f,.5,'triangle',.05,.12+i*.12));sweep(180,c?.rarity==='SSR'?2200:1500,.8,.07)}}
-function playDoor(){tone(55,.8,'sine',.07);tone(110,.55,'sine',.03,.08);noise(.45,.022);sweep(80,360,.38,.035,.18)}
+function playDoor(){tone(48,1.0,'sine',.09);tone(96,.7,'sine',.04,.08);noise(.5,.03);sweep(70,420,.55,.05,.18,'sawtooth');tone(660,.16,'square',.025,.62);tone(880,.2,'triangle',.03,.72)}
 function playFootsteps(){for(let i=0;i<4;i++){tone(82,.1,'sine',.04,i*.27);noise(.07,.016,i*.27)}}
 function playDecision(rarity){sweep(rarity==='UR'?260:rarity==='SSR'?220:170,rarity==='UR'?1800:rarity==='SSR'?1250:760,.72,rarity==='UR'?.085:rarity==='SSR'?.07:.052);tone(330,.18,'triangle',.045,.18);tone(494,.28,'triangle',.045,.31);if(rarity==='UR'){tone(659,.55,'sine',.075,.44);tone(988,.9,'sine',.065,.58)}else if(rarity==='SSR'){tone(784,.5,'sine',.055,.45)}else tone(587,.32,'sine',.04,.4)}
 function playURClimax(){sweep(90,2600,1.55,.105);sweep(180,4200,1.15,.055,.55,'triangle');[392,523.25,659.25,783.99,1046.5].forEach((f,i)=>tone(f,.8,'sine',.045,1.72+i*.08));noise(.22,.07,1.78);tone(55,.7,'sine',.075,1.8)}
@@ -316,7 +353,7 @@ function prepareCandidates(){const box=document.getElementById('cCandidates');bo
 function resetGachaVisual(){
  const ids=['gachaOrb','gachaRarity','gachaResultImg','gachaName','gachaSub','gachaBurst','gachaRays','gacha10'];
  ids.forEach(id=>{const e=document.getElementById(id);if(e)e.className=e.id==='gachaOrb'?'gacha-orb':e.id==='gachaRarity'?'gacha-rarity':e.id==='gachaResultImg'?'gacha-result-img':e.id==='gachaName'?'gacha-name':e.id==='gachaSub'?'gacha-sub':e.id==='gachaBurst'?'gacha-burst':e.id==='gachaRays'?'gacha-rays':'gacha-10';});
- document.getElementById('gachaResultImg').src='';document.getElementById('gachaName').textContent='';document.getElementById('gachaSub').textContent='';document.getElementById('gachaRarity').textContent='';document.getElementById('gacha10').innerHTML='';openReady=false;const pc=document.getElementById('physicalCapsule');if(pc)pc.className='physical-capsule';const ro=document.getElementById('rotor');if(ro)ro.className='rotor';const oh=document.getElementById('openHatch');if(oh){oh.className='open-hatch';oh.textContent='TAP TO OPEN';}document.getElementById('cinema').classList.remove('hatch-open');
+ document.getElementById('gachaResultImg').src='';document.getElementById('gachaName').textContent='';document.getElementById('gachaSub').textContent='';document.getElementById('gachaRarity').textContent='';document.getElementById('gacha10').innerHTML='';openReady=false;const pc=document.getElementById('physicalCapsule');if(pc)pc.className='physical-capsule';const ro=document.getElementById('rotor');if(ro)ro.className='rotor';const oh=document.getElementById('openHatch');if(oh){oh.className='open-hatch';oh.textContent='TAP TO OPEN';}document.getElementById('cinema').classList.remove('hatch-open','door-phase','rarity-ur','rarity-ssr','rarity-sr');const ant=document.getElementById('rarityAnticipation');if(ant)ant.className='rarity-anticipation';const rw=document.getElementById('reelWarning');if(rw)rw.className='reel-warning';const br=document.getElementById('bizReels');if(br)br.classList.remove('on');
 }
 function rarityClass(c){return c.rarity==='UR'?'biz-ur':c.rarity==='SSR'?'biz-ssr':c.rarity==='SR'?'biz-sr':'biz-r'}
 function rarityColor(c){return c.rarity==='UR'?'#ffd45c':c.rarity==='SSR'?'#b58cff':c.rarity==='SR'?'#62baff':'#d8e2f5'}
@@ -335,12 +372,46 @@ function startCinema(num){
  cinemaTimeouts.push(setTimeout(()=>prepareOpen(),10200));
 }
 function updateCinemaClock(){const elapsed=Math.min(12000,performance.now()-cinemaStart);document.getElementById('cProgressBar').style.width=(elapsed/12000*100)+'%';document.getElementById('cTime').textContent=(elapsed/1000).toFixed(1)+' / 12.0'}
+
+function rarityAnticipation(c){
+ const o=document.getElementById('cinema'),ant=document.getElementById('rarityAnticipation'),big=document.getElementById('rarityAntBig'),small=document.getElementById('rarityAntSmall'),w=document.getElementById('reelWarning'),f=document.getElementById('anticipationFlash');
+ if(!c)return;
+ o.classList.remove('rarity-ur','rarity-ssr','rarity-sr');
+ const key=c.rarity==='UR'?'ur':c.rarity==='SSR'?'ssr':'sr'; o.classList.add('rarity-'+key);
+ ant.className='rarity-anticipation on '+key; w.className='reel-warning on '+key;
+ if(c.rarity==='UR'){big.textContent='??? → ??? → 7';small.textContent='LEGENDARY PATTERN DETECTED';w.textContent='SPECIAL PATTERN';}
+ else if(c.rarity==='SSR'){big.textContent='REVERSE';small.textContent='SPECIAL PATTERN DETECTED';w.textContent='REVERSE CHANCE';}
+ else{big.textContent='BONUS';small.textContent='RARE EMPLOYEE SIGNAL';w.textContent='CHANCE UP';}
+ f.classList.remove('on');void f.offsetWidth;f.classList.add('on');
+ setTimeout(()=>ant.classList.remove('on'),700);setTimeout(()=>w.classList.remove('on'),1100);
+}
+function playRarityAnticipation(c){
+ if(!c)return;
+ if(c.rarity==='UR'){
+   sweep(180,5200,1.7,.11,'sawtooth');
+   for(let i=0;i<12;i++) tone(180+i*95,.09,'square',.018,i*.075);
+   [392,523.25,659.25,783.99,1046.5,1318.5].forEach((f,i)=>tone(f,.5,'triangle',.045,1.02+i*.08));
+   musicKick(.05);musicKick(.48);musicKick(.92);
+ }else if(c.rarity==='SSR'){
+   sweep(160,2500,1.05,.08,'sawtooth');
+   [293.66,369.99,440,554.37,659.25].forEach((f,i)=>tone(f,.35,'square',.035,.15+i*.1));
+   tone(110,.35,'sine',.05,.05);musicKick(.3);
+ }else{
+   sweep(140,1450,.72,.055,'triangle');
+   [261.63,329.63,392,523.25].forEach((f,i)=>tone(f,.28,'triangle',.03,.12+i*.1));
+ }
+}
+function playGateOpen(c){
+ if(c?.rarity==='UR'){sweep(70,3200,1.4,.11,'sawtooth');noise(.35,.06,.35);tone(55,.7,'sine',.09,.55);musicKick(.05);musicKick(.62)}
+ else if(c?.rarity==='SSR'){sweep(120,2100,.9,.08,'sawtooth');tone(392,.45,'triangle',.05,.18);tone(659,.65,'sine',.05,.4)}
+ else sweep(110,1200,.65,.06,'triangle');
+}
 function gachaStage(stage){
  const orb=document.getElementById('gachaOrb'),rar=document.getElementById('gachaRarity'),img=document.getElementById('gachaResultImg'),name=document.getElementById('gachaName'),sub=document.getElementById('gachaSub'),burst=document.getElementById('gachaBurst'),rays=document.getElementById('gachaRays');
- if(stage===1){setScene('city');tone(220,.2,'sine',.025);playDoor();document.getElementById('rotor').classList.add('spin');}
- if(stage===2){setScene('purple');orb.classList.add('shaking');document.getElementById('rotor').classList.add('fast');document.getElementById('physicalCapsule').classList.add('spin');playFootsteps();playCharge();playRotor();}
- if(stage===3){orb.classList.remove('shaking');document.getElementById('physicalCapsule').classList.remove('spin');document.getElementById('rotor').classList.add('fast');const c=cinemaMode===10?(cinemaGot?.find(x=>x.c.rarity==='UR')?.c||cinemaGot?.find(x=>x.c.rarity==='SSR')?.c||cinemaGot?.[0]?.c):cinemaResult;const rc=rarityColor(c);setScene(c.rarity==='UR'?'gold':c.rarity==='SSR'?'purple':'city');if(c.rarity==='UR')document.getElementById('cinema').classList.add('scene-ur');document.getElementById('cinema').classList.add(rarityClass(c));rar.textContent=c.rarity;rar.style.color=rc;rar.style.textShadow='0 0 28px '+rc;rar.classList.add('show');orb.classList.add('rare');burst.style.setProperty('--burst',rc);rays.classList.add('on');burst.classList.add('on');playDecision(c.rarity);hitFlash()}
- if(stage===4){const isUR=cinemaMode===1&&cinemaResult?.rarity==='UR';setScene(isUR?'ur':'gold');orb.classList.add('crack');document.getElementById('physicalCapsule').classList.remove('ready','spin');document.getElementById('physicalCapsule').classList.add('drop');document.getElementById('rotor').classList.remove('fast');if(isUR){playURClimax();const b=document.getElementById('urBlackout'),t=document.getElementById('urTitle');t.classList.remove('on');void t.offsetWidth;t.classList.add('on');setTimeout(()=>b.classList.add('on'),420);setTimeout(()=>b.classList.remove('on'),1120)}else{playDrop();}hitFlash();}
+ if(stage===1){document.getElementById('cinema').classList.add('door-phase');setScene('city');tone(220,.2,'sine',.025);playDoor();document.getElementById('rotor').classList.add('spin');}
+ if(stage===2){document.getElementById('cinema').classList.remove('door-phase');document.getElementById('bizReels').classList.add('on');setScene('purple');orb.classList.add('shaking');document.getElementById('rotor').classList.add('fast');document.getElementById('physicalCapsule').classList.add('spin');playFootsteps();playCharge();playRotor();}
+ if(stage===3){orb.classList.remove('shaking');document.getElementById('physicalCapsule').classList.remove('spin');document.getElementById('rotor').classList.add('fast');const c=cinemaMode===10?(cinemaGot?.find(x=>x.c.rarity==='UR')?.c||cinemaGot?.find(x=>x.c.rarity==='SSR')?.c||cinemaGot?.[0]?.c):cinemaResult;const rc=rarityColor(c);setScene(c.rarity==='UR'?'gold':c.rarity==='SSR'?'purple':'city');if(c.rarity==='UR')document.getElementById('cinema').classList.add('scene-ur');document.getElementById('cinema').classList.add(rarityClass(c));rar.textContent=c.rarity;rar.style.color=rc;rar.style.textShadow='0 0 28px '+rc;rar.classList.add('show');orb.classList.add('rare');burst.style.setProperty('--burst',rc);rays.classList.add('on');burst.classList.add('on');playDecision(c.rarity);playRarityAnticipation(c);rarityAnticipation(c);hitFlash()}
+ if(stage===4){const isUR=cinemaMode===1&&cinemaResult?.rarity==='UR';setScene(isUR?'ur':'gold');orb.classList.add('crack');document.getElementById('physicalCapsule').classList.remove('ready','spin');document.getElementById('physicalCapsule').classList.add('drop');document.getElementById('rotor').classList.remove('fast');if(isUR){playURClimax();playGateOpen(cinemaResult);const b=document.getElementById('urBlackout'),t=document.getElementById('urTitle');t.classList.remove('on');void t.offsetWidth;t.classList.add('on');setTimeout(()=>b.classList.add('on'),420);setTimeout(()=>b.classList.remove('on'),1120)}else{playDrop();playGateOpen(cinemaMode===10?(cinemaGot?.find(x=>x.c.rarity==='SSR')?.c||cinemaGot?.[0]?.c):cinemaResult);}hitFlash();}
  if(stage===5){
    document.getElementById('gachaMachine').classList.remove('hidden');document.getElementById('physicalCapsule').classList.add('ready');
    const c=cinemaMode===10?(cinemaGot?.find(x=>x.c.rarity==='UR')?.c||cinemaGot?.find(x=>x.c.rarity==='SSR')?.c||cinemaGot?.[0]?.c):cinemaResult;
@@ -372,8 +443,8 @@ function closeModal(){document.getElementById('modal').classList.remove('show')}
 renderSoundButton();update();save();
 save();update();renderSoundButton();
 </script>
-<div id="cinema" class="cinema">
- <div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div>
+<div id="cinema" class="cinema"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
+ </div><div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div><div id="anticipationFlash" class="anticipation-flash"></div><div id="reelWarning" class="reel-warning">SPECIAL PATTERN</div><div id="rarityAnticipation" class="rarity-anticipation"><div class="big" id="rarityAntBig"></div><div class="small" id="rarityAntSmall"></div></div>
  <button class="c-skip" onclick="finishCinema(true)">スキップ</button>
  <div class="capsule-stage">
 <div class="hatch-vignette"></div><div id="hatchVfx" class="hatch-vfx"><div class="hatch-glow"></div><div class="hatch-beam"></div><div class="hatch-ring"></div><div class="hatch-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="hatch-half top"></div><div class="hatch-half bottom"></div>
