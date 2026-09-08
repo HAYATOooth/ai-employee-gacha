@@ -370,6 +370,9 @@ function startCinema(num){
     cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
     resetGachaVisual();
     o.className='cinema';
+    o.style.setProperty('display','block','important');
+    o.style.setProperty('visibility','visible','important');
+    o.style.setProperty('pointer-events','auto','important');
     o.classList.add('show');
     setScene('city');
     document.getElementById('cProgressBar').style.width='0%';
@@ -393,13 +396,19 @@ function startCinema(num){
   }catch(err){
     console.error('Gacha start error:',err);
     clearCinemaTimers();
-    o.classList.remove('show');
+    o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');
     setBusy(false);
     try{toast('ガチャ演出を開始できませんでした。もう一度お試しください。')}catch(e){}
   }
 }
 
-function updateCinemaClock(){const elapsed=Math.min(12000,performance.now()-cinemaStart);document.getElementById('cProgressBar').style.width=(elapsed/12000*100)+'%';document.getElementById('cTime').textContent=(elapsed/1000).toFixed(1)+' / 12.0'}
+function updateCinemaClock(){
+  const o=document.getElementById('cinema'),bar=document.getElementById('cProgressBar'),tm=document.getElementById('cTime');
+  if(!o||!o.classList.contains('show')) return;
+  const elapsed=Math.max(0,Math.min(12000,performance.now()-cinemaStart));
+  if(bar) bar.style.width=(elapsed/12000*100)+'%';
+  if(tm) tm.textContent=(elapsed/1000).toFixed(1)+' / 12.0';
+}
 
 function rarityAnticipation(c){
  const o=document.getElementById('cinema'),ant=document.getElementById('rarityAnticipation'),big=document.getElementById('rarityAntBig'),small=document.getElementById('rarityAntSmall'),w=document.getElementById('reelWarning'),f=document.getElementById('anticipationFlash');
@@ -459,10 +468,10 @@ function finishCinema(skipped){
  if(skipped){o.classList.remove('show'); openReady=false;}
  if(skipped){applyCinemaResult();setBusy(false);return}
  updateCinemaClock();
- if(cinemaMode===10){const got=cinemaGot||[];got.forEach(x=>{x.isNew=!owned[x.c.id];owned[x.c.id]=true;addXp(x.c,x.isNew?10:18)});pulls+=10;save();update();setTimeout(()=>{o.classList.remove('show');showTenResults(got);setBusy(false)},120);return}
+ if(cinemaMode===10){const got=cinemaGot||[];got.forEach(x=>{x.isNew=!owned[x.c.id];owned[x.c.id]=true;addXp(x.c,x.isNew?10:18)});pulls+=10;save();update();setTimeout(()=>{o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');showTenResults(got);setBusy(false)},120);return}
  const c=cinemaResult,isNew=!owned[c.id];pulls++;owned[c.id]=true;addXp(c,isNew?10:18);save();update();
  document.getElementById('cImg').src=c.img;document.getElementById('cRarity').textContent=c.rarity+' / '+c.role;document.getElementById('cName').textContent=isNew?c.name+'、入社。':c.name+'、再登場。';document.getElementById('cMsg').textContent=isNew?'採用決定。チームへの配属が承認されました。':`実績を確認。さらに経験値を獲得しました。`;document.getElementById('cStamp').textContent=c.rarity==='UR'?'APPOINTED':c.rarity==='SSR'?'APPROVED':'ASSIGNED';
- setTimeout(()=>{o.classList.remove('show');show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`);setBusy(false)},80)
+ setTimeout(()=>{o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`);setBusy(false)},80)
 }
 function applyCinemaResult(){const c=cinemaResult;if(!c)return;const isNew=!owned[c.id];pulls++;owned[c.id]=true;addXp(c,isNew?10:18);save();update();playReveal(c);show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`)}
 
@@ -474,8 +483,14 @@ save();update();renderSoundButton();
 
 // Ver.4.6: guarantee cinematic layer starts hidden on page load.
 document.getElementById('cinema')?.classList.remove('show');
+  const _cinemaBoot=document.getElementById('cinema');
+  if(_cinemaBoot){
+    _cinemaBoot.style.setProperty('display','none','important');
+    _cinemaBoot.style.setProperty('visibility','hidden','important');
+    _cinemaBoot.style.setProperty('pointer-events','none','important');
+  }
 </script>
-<div id="cinema" class="cinema"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
+<div id="cinema" class="cinema" style="display:none!important;visibility:hidden;pointer-events:none;"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
  </div><div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div><div id="anticipationFlash" class="anticipation-flash"></div><div id="reelWarning" class="reel-warning">SPECIAL PATTERN</div><div id="rarityAnticipation" class="rarity-anticipation"><div class="big" id="rarityAntBig"></div><div class="small" id="rarityAntSmall"></div></div>
  <button class="c-skip" onclick="finishCinema(true)">スキップ</button>
  <div class="capsule-stage">
