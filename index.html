@@ -263,10 +263,10 @@
 @keyframes antFlash{0%{opacity:0}30%{opacity:.9}100%{opacity:0}}
 @keyframes warningPulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.05)}}
 
-/* Ver.4.9 DOM order + cinematic stability patch */
-.cinema{display:none !important;visibility:hidden;pointer-events:none;}
-.cinema.show{display:block !important;visibility:visible;pointer-events:auto;}
-.cinema:not(.show){visibility:hidden !important;pointer-events:none !important;}
+/* Ver.5.0 runtime guard: cinematic layer can only appear after an explicit pull */
+.cinema{display:none !important;visibility:hidden;pointer-events:none;}.cinema.cinema-active{display:block !important;visibility:visible !important;pointer-events:auto !important;}
+.cinema.show{display:none !important;visibility:hidden !important;pointer-events:none !important;}
+.cinema:not(.cinema-active){display:none !important;visibility:hidden !important;pointer-events:none !important;}
 .cinema.show .scene-video{visibility:visible;}
 </style></head>
 <body><main class="app">
@@ -393,9 +393,9 @@ function startCinema(num){
     clearCinemaTimers();
     cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
     resetGachaVisual();
-    o.className='cinema';
+    o.className='cinema cinema-active show';
     o.style.setProperty('display','block','important');o.style.setProperty('visibility','visible','important');o.style.setProperty('pointer-events','auto','important');
-    o.classList.add('show');
+    o.classList.add('cinema-active','show');
     setScene('city');
     document.getElementById('cProgressBar').style.width='0%';
     document.getElementById('cTime').textContent='00.0 / 12.0';
@@ -481,13 +481,13 @@ function gachaRevealFinal(){
 }
 function finishCinema(skipped){
  clearCinemaTimers();const o=document.getElementById('cinema');
- if(skipped){o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');openReady=false;}
+ if(skipped){o.classList.remove('show','cinema-active');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');openReady=false;}
  if(skipped){applyCinemaResult();setBusy(false);return}
  updateCinemaClock();
- if(cinemaMode===10){const got=cinemaGot||[];got.forEach(x=>{x.isNew=!owned[x.c.id];owned[x.c.id]=true;addXp(x.c,x.isNew?10:18)});pulls+=10;save();update();setTimeout(()=>{o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');showTenResults(got);setBusy(false)},120);return}
+ if(cinemaMode===10){const got=cinemaGot||[];got.forEach(x=>{x.isNew=!owned[x.c.id];owned[x.c.id]=true;addXp(x.c,x.isNew?10:18)});pulls+=10;save();update();setTimeout(()=>{o.classList.remove('show','cinema-active');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');showTenResults(got);setBusy(false)},120);return}
  const c=cinemaResult,isNew=!owned[c.id];pulls++;owned[c.id]=true;addXp(c,isNew?10:18);save();update();
  document.getElementById('cImg').src=c.img;document.getElementById('cRarity').textContent=c.rarity+' / '+c.role;document.getElementById('cName').textContent=isNew?c.name+'、入社。':c.name+'、再登場。';document.getElementById('cMsg').textContent=isNew?'採用決定。チームへの配属が承認されました。':`実績を確認。さらに経験値を獲得しました。`;document.getElementById('cStamp').textContent=c.rarity==='UR'?'APPOINTED':c.rarity==='SSR'?'APPROVED':'ASSIGNED';
- setTimeout(()=>{o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`);setBusy(false)},80)
+ setTimeout(()=>{o.classList.remove('show','cinema-active');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`);setBusy(false)},80)
 }
 function applyCinemaResult(){const c=cinemaResult;if(!c)return;const isNew=!owned[c.id];pulls++;owned[c.id]=true;addXp(c,isNew?10:18);save();update();playReveal(c);show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`)}
 
@@ -508,6 +508,15 @@ document.addEventListener('DOMContentLoaded',()=>{
     update();
     save();
   }catch(e){console.error('AI Employee Gacha init error',e)}
+});
+window.addEventListener('pageshow',()=>{
+  const cinema=document.getElementById('cinema');
+  if(cinema && !cinema.classList.contains('cinema-active')){
+    cinema.classList.remove('show');
+    cinema.style.setProperty('display','none','important');
+    cinema.style.setProperty('visibility','hidden','important');
+    cinema.style.setProperty('pointer-events','none','important');
+  }
 });
 </script>
 
