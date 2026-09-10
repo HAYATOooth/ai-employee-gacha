@@ -272,12 +272,12 @@
 <body><main class="app">
 <header class="hero"><div class="eyebrow">AI EMPLOYEE GACHA</div><div class="title">AI社員7人ガチャ</div><div class="sub">集めるだけじゃない。社員を働かせて、会社を育てよう。</div></header><button id="soundBtn" class="sound-btn" onclick="toggleSound()">🔊 サウンド ON</button>
 <div class="topbar"><div class="stat"><b id="coins">1,000</b><span>💰 コイン</span></div><div class="stat"><b id="companyLevel">Lv.1</b><span>🏢 会社レベル</span></div><div class="stat"><b id="rate">0%</b><span>📚 収集率</span></div><div class="stat"><b id="pulls">0</b><span>🎯 ガチャ回数</span></div></div>
-<section class="machine"><div style="text-align:center;letter-spacing:.24em;font-size:10px;color:#c4d2e9;margin-bottom:10px;position:relative;z-index:2">AI EMPLOYEE CAPSULE</div><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.6.1：ガチャ演出は「引く」ボタンを押した時だけ生成されます。</div></section>
+<section class="machine"><div style="text-align:center;letter-spacing:.24em;font-size:10px;color:#c4d2e9;margin-bottom:10px;position:relative;z-index:2">AI EMPLOYEE CAPSULE</div><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.6.2：ガチャ演出は「引く」ボタンを押した時だけ生成されます。</div></section>
 <section id="result" class="result"><div class="card"><div id="rarity" class="rarity"></div><div id="newBadge" class="new-badge" style="display:none">✨ NEW!</div><img id="resultImg"><div class="info"><div id="resultRole" class="role"></div><div id="resultName" class="name"></div><div id="resultDesc" class="desc"></div><div id="quote" class="quote"></div></div></div></section>
 <section class="panel"><div class="panel-title"><h2>💼 今日の仕事</h2><span class="muted">社員を派遣して報酬GET</span></div><div id="jobs" class="jobs"></div></section>
 <section class="panel"><div class="panel-title"><h2>👥 社員育成</h2><span class="muted">LvUP＋能力強化</span></div><div id="employees" class="employees"></div></section>
 <section class="collection"><div class="section-title"><h2>📚 キャラクター図鑑</h2><span id="collectionText">7人中0人</span></div><div id="grid" class="grid"></div></section>
-<div class="foot">AI社員チーム・Gacha v6.1 / 7 Characters<br><span style="font-size:10px;letter-spacing:.18em;opacity:.7">BUILD V6.1-LAZY-FIX</span></div></main>
+<div class="foot">AI社員チーム・Gacha v6.2 / 7 Characters<br><span style="font-size:10px;letter-spacing:.18em;opacity:.7">BUILD V6.2-RAF-FIX</span></div></main>
 <div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">閉じる</button><h2>✨ 10連結果</h2><div id="tenGrid" class="ten-grid"></div></div></div>
 <div id="detail" class="detail"><div class="detail-box"><button class="detail-close" onclick="closeDetail()">×</button><img id="detailImg"><div class="info"><div id="detailRole" class="role"></div><div id="detailName" class="name"></div><div id="detailDesc" class="desc"></div><div id="detailQuote" class="quote"></div></div></div></div>
 <div id="toast" class="toast"></div><div id="super" class="super"></div>
@@ -354,7 +354,7 @@ function pull(num){
 }
 function tenPull(){ /* cinematic flow handles the result */ }
 
-let cinemaTimer=null,cinemaMode=1,cinemaResult=null,cinemaGot=null,cinemaStart=0,cinemaTimeouts=[],audioCtx=null,soundOn=localStorage.getItem('ai_employee_gacha_sound')!=='off',bgmTimer=null,openReady=false;
+let cinemaTimer=null,cinemaRaf=null,cinemaMode=1,cinemaResult=null,cinemaGot=null,cinemaStart=0,cinemaTimeouts=[],cinemaStage=0,audioCtx=null,soundOn=localStorage.getItem('ai_employee_gacha_sound')!=='off',bgmTimer=null,openReady=false;
 function initAudio(){if(!soundOn)return;try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}}
 function tone(freq,dur,type='sine',gain=.04,delay=0){if(!soundOn)return;initAudio();if(!audioCtx)return;const t=audioCtx.currentTime+delay,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(gain,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+dur+.03)}
 function noise(dur=.18,gain=.035,delay=0){if(!soundOn)return;initAudio();if(!audioCtx)return;const len=Math.floor(audioCtx.sampleRate*dur),buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate),data=buf.getChannelData(0);for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);const s=audioCtx.createBufferSource(),f=audioCtx.createBiquadFilter(),g=audioCtx.createGain(),t=audioCtx.currentTime+delay;f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(gain,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);s.buffer=buf;s.connect(f).connect(g).connect(audioCtx.destination);s.start(t);}
@@ -378,7 +378,7 @@ function hitFlash(){const f=document.getElementById('cinemaFlash');if(!f)return;
 function setScene(kind){const o=document.getElementById('cinema');o.classList.remove('scene-purple','scene-gold','scene-ur');const all=[document.getElementById('sceneCity'),document.getElementById('scenePurple'),document.getElementById('sceneGold'),document.getElementById('sceneUR')];all.forEach(v=>v&&v.classList.remove('active'));let v=kind==='purple'?document.getElementById('scenePurple'):kind==='gold'?document.getElementById('sceneGold'):kind==='ur'?document.getElementById('sceneUR'):document.getElementById('sceneCity');if(v){v.classList.add('active');try{v.currentTime=(kind==='gold'?.45:kind==='purple'?.2:kind==='ur'?0:0);v.play().catch(()=>{});}catch(e){}}if(kind==='purple')o.classList.add('scene-purple');if(kind==='gold')o.classList.add('scene-gold');if(kind==='ur')o.classList.add('scene-ur')}
 function toggleSound(){soundOn=!soundOn;localStorage.setItem('ai_employee_gacha_sound',soundOn?'on':'off');document.getElementById('soundBtn').textContent=soundOn?'🔊 サウンド ON':'🔇 サウンド OFF';document.getElementById('soundBtn').classList.toggle('off',!soundOn);if(soundOn){initAudio();tone(660,.12,'sine',.04)}}
 function renderSoundButton(){const b=document.getElementById('soundBtn');if(!b)return;b.textContent=soundOn?'🔊 サウンド ON':'🔇 サウンド OFF';b.classList.toggle('off',!soundOn)}
-function clearCinemaTimers(){cinemaTimeouts.forEach(clearTimeout);cinemaTimeouts=[];clearInterval(cinemaTimer);stopBgm()}
+function clearCinemaTimers(){cinemaTimeouts.forEach(clearTimeout);cinemaTimeouts=[];clearInterval(cinemaTimer);cinemaTimer=null;if(cinemaRaf){cancelAnimationFrame(cinemaRaf);cinemaRaf=null}stopBgm()}
 function prepareCandidates(){const box=document.getElementById('cCandidates');box.innerHTML='';if(cinemaMode!==10){box.classList.remove('show');return}cinemaGot=[];for(let i=0;i<10;i++){const c=weighted();cinemaGot.push({c,isNew:!owned[c.id]});const d=document.createElement('div');d.className='cand-chip '+c.rarity.toLowerCase();d.innerHTML=`<img src="${c.img}" alt="">`;d.style.animationDelay=(i*.13)+'s';box.appendChild(d)}box.classList.remove('show')}
 function resetGachaVisual(){
  const ids=['gachaOrb','gachaRarity','gachaResultImg','gachaName','gachaSub','gachaBurst','gachaRays','gacha10'];
@@ -401,7 +401,7 @@ function startCinema(num){
 
   try{
     clearCinemaTimers();
-    cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
+    cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); cinemaStage=0; openReady=false;
     resetGachaVisual();
     o.className='cinema cinema-active show';
     o.style.setProperty('display','block','important');o.style.setProperty('visibility','visible','important');o.style.setProperty('pointer-events','auto','important');
@@ -418,13 +418,24 @@ function startCinema(num){
       if(gm) gm.classList.remove('hidden');
       if(pc) pc.classList.add('ready');
     });
-    cinemaTimer=setInterval(updateCinemaClock,50);
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(1),1200));
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(2),2800));
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(3),5000));
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(4),7000));
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(5),8500));
-    cinemaTimeouts.push(setTimeout(()=>{if(!openReady && o.classList.contains('show')) gachaStage(5)},9800));
+    // V6.2: use requestAnimationFrame as the master cinematic clock.
+    // This avoids the mobile-browser timer throttling/freeze that could leave the scene at 00.0.
+    const loop=(now)=>{
+      const current=document.getElementById('cinema');
+      if(!current || !current.classList.contains('show')){cinemaRaf=null;return;}
+      const elapsed=Math.max(0,Math.min(12000,now-cinemaStart));
+      const b=document.getElementById('cProgressBar'),t=document.getElementById('cTime');
+      if(b)b.style.width=(elapsed/12000*100)+'%';
+      if(t)t.textContent=(elapsed/1000).toFixed(1)+' / 12.0';
+      if(cinemaStage<1 && elapsed>=1200){cinemaStage=1;gachaStage(1)}
+      if(cinemaStage<2 && elapsed>=2800){cinemaStage=2;gachaStage(2)}
+      if(cinemaStage<3 && elapsed>=5000){cinemaStage=3;gachaStage(3)}
+      if(cinemaStage<4 && elapsed>=7000){cinemaStage=4;gachaStage(4)}
+      if(cinemaStage<5 && elapsed>=8500){cinemaStage=5;gachaStage(5)}
+      if(!openReady && elapsed>=9800 && cinemaStage<5){cinemaStage=5;gachaStage(5)}
+      cinemaRaf=requestAnimationFrame(loop);
+    };
+    cinemaRaf=requestAnimationFrame(loop);
   }catch(err){
     console.error('Gacha start error:',err);
     clearCinemaTimers();
