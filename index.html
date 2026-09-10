@@ -268,6 +268,27 @@
 .cinema.show{display:none !important;visibility:hidden !important;pointer-events:none !important;}
 .cinema:not(.cinema-active){display:none !important;visibility:hidden !important;pointer-events:none !important;}
 .cinema.show .scene-video{visibility:visible;}
+
+/* V6.3 CSS FLOW: cinematic progression is driven by CSS animations, not JS clocks/timers. */
+.cinema.css-flow .gacha-machine{opacity:1!important}
+.cinema.css-flow .rotor{animation:rotorCssFlow 8.5s linear infinite!important}
+.cinema.css-flow .physical-capsule{opacity:1!important;animation:capsuleCssFlow 8.5s cubic-bezier(.15,.8,.2,1) forwards!important}
+.cinema.css-flow .biz-reels{opacity:0;animation:reelsCssFlow 8.5s ease forwards}
+.cinema.css-flow .cinema-bg{animation:bgCssFlow 8.5s ease-in-out forwards}
+.cinema.css-flow .c-progress b{width:0!important;animation:progressCssFlow 8.5s linear forwards!important}
+.cinema.css-flow .c-time{font-size:0!important}
+.cinema.css-flow .c-time:after{content:"演出進行中";font-size:10px;letter-spacing:.08em}
+.cinema.css-flow .open-hatch{opacity:0;pointer-events:auto!important;animation:hatchCssFlow 8.5s ease forwards!important}
+@keyframes rotorCssFlow{0%,18%{transform:rotate(0deg)}28%{transform:rotate(180deg)}45%,70%{transform:rotate(900deg)}100%{transform:rotate(1800deg)}}
+@keyframes capsuleCssFlow{0%{opacity:0;transform:translate(-50%,-50%) scale(.75)}8%{opacity:1;transform:translate(-50%,-50%) scale(1)}25%{transform:translate(-50%,-50%) rotate(-7deg) scale(1)}35%{transform:translate(-50%,-50%) rotate(7deg) scale(1.05)}45%{transform:translate(-50%,-50%) rotate(-6deg) scale(1.08)}58%{transform:translate(-50%,-50%) rotate(3deg) scale(1.1)}72%{transform:translate(-50%,85vh) rotate(540deg) scale(.85);opacity:1}82%{transform:translate(-50%,85vh) rotate(720deg) scale(.85);opacity:1}100%{transform:translate(-50%,85vh) rotate(900deg) scale(.85);opacity:1}}
+@keyframes reelsCssFlow{0%,24%{opacity:0;transform:translateY(8px)}28%,68%{opacity:1;transform:none}82%,100%{opacity:.35;transform:none}}
+@keyframes bgCssFlow{0%,20%{filter:brightness(.72)}45%{filter:brightness(.95) saturate(1.1)}75%{filter:brightness(1.15) saturate(1.3)}100%{filter:brightness(1.05)}}
+@keyframes progressCssFlow{from{width:0!important}to{width:100%!important}}
+@keyframes hatchCssFlow{0%,67%{opacity:0;transform:translateX(-50%) scale(.8)}74%{opacity:1;transform:translateX(-50%) scale(1.06)}79%,100%{opacity:1;transform:translateX(-50%) scale(1)}}
+.cinema.css-flow .cinema-flash{animation:flashFlow 8.5s ease-in-out infinite;opacity:0}
+@keyframes flashFlow{0%,48%,100%{opacity:0}53%{opacity:.28}56%{opacity:0}76%{opacity:.18}79%{opacity:0}}
+.cinema.css-flow .hatch-caption{animation:captionCssFlow 8.5s ease forwards}
+@keyframes captionCssFlow{0%,67%{opacity:0}74%,100%{opacity:1}}
 </style></head>
 <body><main class="app">
 <header class="hero"><div class="eyebrow">AI EMPLOYEE GACHA</div><div class="title">AI社員7人ガチャ</div><div class="sub">集めるだけじゃない。社員を働かせて、会社を育てよう。</div></header><button id="soundBtn" class="sound-btn" onclick="toggleSound()">🔊 サウンド ON</button>
@@ -277,7 +298,7 @@
 <section class="panel"><div class="panel-title"><h2>💼 今日の仕事</h2><span class="muted">社員を派遣して報酬GET</span></div><div id="jobs" class="jobs"></div></section>
 <section class="panel"><div class="panel-title"><h2>👥 社員育成</h2><span class="muted">LvUP＋能力強化</span></div><div id="employees" class="employees"></div></section>
 <section class="collection"><div class="section-title"><h2>📚 キャラクター図鑑</h2><span id="collectionText">7人中0人</span></div><div id="grid" class="grid"></div></section>
-<div class="foot">AI社員チーム・Gacha v6.2 / 7 Characters<br><span style="font-size:10px;letter-spacing:.18em;opacity:.7">BUILD V6.2-RAF-FIX</span></div></main>
+<div class="foot">AI社員チーム・Gacha v6.2 / 7 Characters<br><span style="font-size:10px;letter-spacing:.18em;opacity:.7">BUILD V6.3-CSS-FLOW</span></div></main>
 <div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">閉じる</button><h2>✨ 10連結果</h2><div id="tenGrid" class="ten-grid"></div></div></div>
 <div id="detail" class="detail"><div class="detail-box"><button class="detail-close" onclick="closeDetail()">×</button><img id="detailImg"><div class="info"><div id="detailRole" class="role"></div><div id="detailName" class="name"></div><div id="detailDesc" class="desc"></div><div id="detailQuote" class="quote"></div></div></div></div>
 <div id="toast" class="toast"></div><div id="super" class="super"></div>
@@ -398,50 +419,47 @@ function ensureCinema(){
 function startCinema(num){
   const o=ensureCinema();
   if(!o){setBusy(false);toast('演出画面を読み込めませんでした。');return;}
-
   try{
     clearCinemaTimers();
-    cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); cinemaStage=0; openReady=false;
+    cinemaMode=num; cinemaResult=null; cinemaStage=0; openReady=false;
     resetGachaVisual();
-    o.className='cinema cinema-active show';
-    o.style.setProperty('display','block','important');o.style.setProperty('visibility','visible','important');o.style.setProperty('pointer-events','auto','important');
-    o.classList.add('cinema-active','show');
+    o.className='cinema cinema-active show css-flow';
+    o.style.setProperty('display','block','important');
+    o.style.setProperty('visibility','visible','important');
+    o.style.setProperty('pointer-events','auto','important');
     setScene('city');
-    document.getElementById('cProgressBar').style.width='0%';
-    document.getElementById('cTime').textContent='00.0 / 12.0';
+    const b=document.getElementById('cProgressBar'); if(b){b.style.width='0%';}
+    const t=document.getElementById('cTime'); if(t){t.textContent='演出進行中';}
     initAudio();
-    if(soundOn){ tone(120,.22,'triangle',.045); playMachineStart(); playBgm(); }
+    if(soundOn){tone(120,.22,'triangle',.045);playMachineStart();playBgm();}
     if(num===10) prepareCandidates(); else cinemaResult=weighted();
     setBusy(true);
-    requestAnimationFrame(()=>{
-      const gm=document.getElementById('gachaMachine'), pc=document.getElementById('physicalCapsule');
-      if(gm) gm.classList.remove('hidden');
-      if(pc) pc.classList.add('ready');
+    const pc=document.getElementById('physicalCapsule'); if(pc)pc.classList.add('ready');
+    const gm=document.getElementById('gachaMachine'); if(gm)gm.classList.remove('hidden');
+    const oh=document.getElementById('openHatch');
+    if(oh){
+      oh.classList.remove('ready');
+      oh.classList.add('css-flow-ready');
+      oh.textContent=num===10?'TAP TO OPEN 10 CAPSULES':'TAP TO OPEN';
+    }
+    // CSS is the master clock. animationend is used only to enable the final tap.
+    o.addEventListener('animationend',function onFlow(e){
+      if(e.animationName!=='hatchCssFlow')return;
+      o.removeEventListener('animationend',onFlow);
+      if(!o.classList.contains('show'))return;
+      openReady=true;
+      const btn=document.getElementById('openHatch');
+      // The CSS flow already makes the button visible and clickable.
+      if(cinemaResult) { try { rarityAnticipation(cinemaResult); } catch(err){} }
+      try{playRotor();}catch(err){}
     });
-    // V6.2: use requestAnimationFrame as the master cinematic clock.
-    // This avoids the mobile-browser timer throttling/freeze that could leave the scene at 00.0.
-    const loop=(now)=>{
-      const current=document.getElementById('cinema');
-      if(!current || !current.classList.contains('show')){cinemaRaf=null;return;}
-      const elapsed=Math.max(0,Math.min(12000,now-cinemaStart));
-      const b=document.getElementById('cProgressBar'),t=document.getElementById('cTime');
-      if(b)b.style.width=(elapsed/12000*100)+'%';
-      if(t)t.textContent=(elapsed/1000).toFixed(1)+' / 12.0';
-      if(cinemaStage<1 && elapsed>=1200){cinemaStage=1;gachaStage(1)}
-      if(cinemaStage<2 && elapsed>=2800){cinemaStage=2;gachaStage(2)}
-      if(cinemaStage<3 && elapsed>=5000){cinemaStage=3;gachaStage(3)}
-      if(cinemaStage<4 && elapsed>=7000){cinemaStage=4;gachaStage(4)}
-      if(cinemaStage<5 && elapsed>=8500){cinemaStage=5;gachaStage(5)}
-      if(!openReady && elapsed>=9800 && cinemaStage<5){cinemaStage=5;gachaStage(5)}
-      cinemaRaf=requestAnimationFrame(loop);
-    };
-    cinemaRaf=requestAnimationFrame(loop);
   }catch(err){
     console.error('Gacha start error:',err);
     clearCinemaTimers();
-    o.classList.remove('show');
+    o.classList.remove('show','cinema-active','css-flow');
+    o.style.setProperty('display','none','important');
     setBusy(false);
-    try{toast('ガチャ演出を開始できませんでした。もう一度お試しください。')}catch(e){}
+    try{toast('ガチャ演出を開始できませんでした。もう一度お試しください')}catch(e){}
   }
 }
 
