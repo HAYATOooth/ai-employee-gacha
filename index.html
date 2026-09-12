@@ -420,38 +420,70 @@ function rarityClass(c){return c.rarity==='UR'?'biz-ur':c.rarity==='SSR'?'biz-ss
 function rarityColor(c){return c.rarity==='UR'?'#ffd45c':c.rarity==='SSR'?'#b58cff':c.rarity==='SR'?'#62baff':'#d8e2f5'}
 function startCinema(num){
   const o=document.getElementById('cinema');
+  if(!o)return;
+  clearCinemaTimers();
+  cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
+  try{resetGachaVisual();}catch(e){console.warn('reset visual skipped',e)}
+
+  // IMPORTANT: the cinematic must never depend on requestAnimationFrame or audio.
+  // Mobile browsers can throttle/interrupt both.  Use a simple timer state machine.
+  o.className='cinema show';
+  o.style.setProperty('display','block','important');
+  o.style.setProperty('visibility','visible','important');
+  o.style.setProperty('pointer-events','auto','important');
+
+  try{setScene('city');}catch(e){console.warn('scene init skipped',e)}
+  const bar=document.getElementById('cProgressBar'), tm=document.getElementById('cTime');
+  if(bar)bar.style.width='0%';
+  if(tm)tm.textContent='00.0 / 12.0';
+  if(num===10)prepareCandidates(); else cinemaResult=weighted();
+  setBusy(true);
+
+  let stageDone=0;
+  const safeStage=(n)=>{
+    if(!o.classList.contains('show') || n<=stageDone)return;
+    stageDone=n;
+    try{
+      gachaStage(n);
+    }catch(err){
+      console.error('Gacha stage '+n+' error:',err);
+      // If an optional visual/audio component fails, keep the flow alive.
+      if(n<5){
+        try{gachaStage(5)}catch(e){
+          openReady=true;
+          const b=document.getElementById('openHatch');
+          if(b)b.classList.add('ready');
+        }
+        stageDone=5;
+      }
+    }
+  };
+
+  // First visual transition is deliberately immediate.
+  safeStage(1);
+
+  // Timer-only progression. No RAF, no video event, no audio dependency.
+  cinemaTimeouts.push(setTimeout(()=>safeStage(2),900));
+  cinemaTimeouts.push(setTimeout(()=>safeStage(3),2100));
+  cinemaTimeouts.push(setTimeout(()=>safeStage(4),3500));
+  cinemaTimeouts.push(setTimeout(()=>safeStage(5),5000));
+  // Absolute watchdog: the OPEN button must appear even if a stage fails.
+  cinemaTimeouts.push(setTimeout(()=>{
+    if(o.classList.contains('show') && !openReady){
+      try{safeStage(5)}catch(e){}
+      openReady=true;
+      const b=document.getElementById('openHatch');
+      if(b){b.classList.add('ready');b.style.setProperty('opacity','1','important');b.style.setProperty('pointer-events','auto','important');}
+    }
+  },6500));
+
+  cinemaTimer=setInterval(updateCinemaClock,50);
+
+  // Audio is optional. It is started LAST and can never block the visual flow.
   try{
-    clearCinemaTimers();
-    cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
-    resetGachaVisual();
-    o.className='cinema show';
-    o.style.setProperty('display','block','important');o.style.setProperty('visibility','visible','important');o.style.setProperty('pointer-events','auto','important');
-    setScene('city');
-    document.getElementById('cProgressBar').style.width='0%';
-    document.getElementById('cTime').textContent='00.0 / 12.0';
     initAudio();
-    if(soundOn){ tone(120,.22,'triangle',.045); playMachineStart(); playBgm(); }
-    if(num===10) prepareCandidates(); else cinemaResult=weighted();
-    setBusy(true);
-    requestAnimationFrame(()=>{
-      const gm=document.getElementById('gachaMachine'), pc=document.getElementById('physicalCapsule');
-      if(gm) gm.classList.remove('hidden');
-      if(pc) pc.classList.add('ready');
-    });
-    cinemaTimer=setInterval(updateCinemaClock,50);
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(1),1200));
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(2),2800));
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(3),5000));
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(4),7000));
-    cinemaTimeouts.push(setTimeout(()=>gachaStage(5),8500));
-    cinemaTimeouts.push(setTimeout(()=>{if(!openReady && o.classList.contains('show')) gachaStage(5)},9800));
-  }catch(err){
-    console.error('Gacha start error:',err);
-    clearCinemaTimers();
-    o.classList.remove('show');
-    setBusy(false);
-    try{toast('ガチャ演出を開始できませんでした。もう一度お試しください。')}catch(e){}
-  }
+    if(soundOn){tone(120,.22,'triangle',.045);playMachineStart();playBgm();}
+  }catch(e){console.warn('audio skipped',e)}
 }
 
 function updateCinemaClock(){const o=document.getElementById('cinema');if(!o||!o.classList.contains('show'))return;const elapsed=Math.max(0,Math.min(12000,performance.now()-cinemaStart));const b=document.getElementById('cProgressBar'),t=document.getElementById('cTime');if(b)b.style.width=(elapsed/12000*100)+'%';if(t)t.textContent=(elapsed/1000).toFixed(1)+' / 12.0'}
