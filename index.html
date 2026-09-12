@@ -560,4 +560,82 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 </script>
 
+
+<style>
+/* Ver.7.2: colorful mobile-game gacha climax */
+#cinema.g7{background:#03030b!important}
+#cinema.g7 .game-bg{background:radial-gradient(circle at 50% 42%,rgba(82,92,255,.30),transparent 32%),linear-gradient(180deg,rgba(3,5,20,.30),rgba(2,2,12,.84)),url("gacha_bg.png") center/cover no-repeat;animation:g7Bg 7s ease-in-out infinite alternate}
+#cinema.g7 .game-vignette{background:radial-gradient(circle at 50% 48%,transparent 0 18%,rgba(3,3,15,.18) 38%,rgba(0,0,8,.88) 100%)}
+#cinema.g7 .game-top{top:max(16px,env(safe-area-inset-top));font-size:8px}
+#cinema.g7 .game-top b{background:rgba(14,11,38,.82);border-color:rgba(255,255,255,.22);color:#fff}
+#cinema.g7 .game-stage{inset:10% 0 15%}
+#cinema.g7 .energy-ring{border-width:2px;box-shadow:0 0 22px currentColor;opacity:.65}
+#cinema.g7 .ring1{color:#49ddff;border-color:#49ddff77;animation-duration:3.8s}
+#cinema.g7 .ring2{color:#c45cff;border-color:#c45cff88;animation-duration:2.7s}
+#cinema.g7 .ring3{color:#ffd84f;border-color:#ffd84f88;animation-duration:1.9s}
+#cinema.g7 .gacha-machine{width:min(74vw,420px);height:min(74vw,420px);background:radial-gradient(circle at 45% 38%,#394ed0 0 12%,#151b55 35%,#090d24 70%);border:2px solid #aab8ff99;box-shadow:0 0 35px #4e7dff88,0 0 100px #bd3fff55,inset 0 0 55px #46dfff22}
+#cinema.g7 .gacha-machine:after{content:"";position:absolute;inset:8%;border-radius:50%;border:1px dashed rgba(255,255,255,.22);animation:g7Spin 6s linear infinite}
+#cinema.g7 .machine-halo{border-color:#66e7ff66;box-shadow:0 0 45px #5adfff66,0 0 100px #a94cff44}
+#cinema.g7 .machine-brand{color:#eef3ff;text-shadow:0 0 12px #67dcff;font-size:8px}
+#cinema.g7 .physical-capsule{width:100%;height:100%;background:radial-gradient(circle at 30% 24%,#fff 0 7%,#bde8ff 22%,#5b6dff 55%,#8c2cff 82%,#26134f 100%);border:2px solid #fff;box-shadow:0 0 28px #6eeaff,0 0 75px #8b5cff,0 0 120px #ff4bd655,inset 0 -18px 32px #1e164c}
+#cinema.g7 .physical-capsule.ready{animation:g7Float 1.15s ease-in-out infinite}
+#cinema.g7 .physical-capsule.spin{animation:g7SpinCapsule .28s linear infinite}
+#cinema.g7 .physical-capsule.drop{animation:g7Drop .62s cubic-bezier(.15,.9,.2,1) forwards}
+#cinema.g7 .gacha-rarity{top:9%;font-size:clamp(42px,15vw,82px);font-style:italic;letter-spacing:.06em}
+#cinema.g7 .gacha-result-img{width:min(92vw,480px);height:min(60vh,550px);bottom:10%;filter:drop-shadow(0 12px 28px rgba(0,0,0,.9)) drop-shadow(0 0 25px var(--rarityGlow,#fff))}
+#cinema.g7 .gacha-name{bottom:8%;font-size:clamp(28px,9vw,54px);text-shadow:0 0 10px #fff,0 5px 30px #000;font-weight:1000}
+#cinema.g7 .gacha-sub{bottom:4.5%;font-size:10px;font-weight:900;color:#fff}
+#cinema.g7 .open-hatch{bottom:7%;padding:16px 34px;font-size:15px;background:linear-gradient(135deg,#53e6ff,#665cff 45%,#ff4ccf);box-shadow:0 0 30px #667affaa,0 0 70px #d14cff55;animation:none}
+#cinema.g7 .open-hatch.ready{animation:g7ButtonIn .45s cubic-bezier(.15,.9,.2,1) forwards,g7ButtonPulse 1s .45s infinite}
+#cinema.g7 .game-message{font-size:12px;text-shadow:0 0 15px #8ab8ff}
+#cinema.g7.rarity-sr .physical-capsule{--g7:#4cc9ff}
+#cinema.g7.rarity-ssr .physical-capsule{--g7:#c65cff}
+#cinema.g7.rarity-ur .physical-capsule{--g7:#ffd34e}
+#cinema.g7.rarity-ssr .gacha-machine{border-color:#e88cff;box-shadow:0 0 45px #d94cffaa,0 0 130px #a04cff66,inset 0 0 70px #d44cff22}
+#cinema.g7.rarity-ur .gacha-machine{border-color:#ffe88a;box-shadow:0 0 55px #ffd24faa,0 0 160px #ff8c3f88,inset 0 0 90px #fff0a522}
+.g7-vfx{position:absolute;inset:0;z-index:28;pointer-events:none;overflow:hidden}
+.g7-vfx .beam{position:absolute;left:50%;top:0;width:3px;height:100%;transform:translateX(-50%) scaleY(.1);background:linear-gradient(transparent,#fff,#fff,transparent);box-shadow:0 0 25px 8px #fff;opacity:0}
+.g7-vfx .shock{position:absolute;left:50%;top:52%;width:20px;height:20px;border:3px solid #fff;border-radius:50%;transform:translate(-50%,-50%) scale(.1);opacity:0}
+.g7-vfx .spark{position:absolute;left:50%;top:52%;width:7px;height:7px;border-radius:50%;background:#fff;box-shadow:0 0 12px #fff}
+.g7-vfx .burst{position:absolute;inset:-20%;background:repeating-conic-gradient(from 0deg,transparent 0 5deg,rgba(255,255,255,.22) 6deg 7deg,transparent 8deg 13deg);opacity:0;transform:scale(.4)}
+.g7-vfx.on .beam{animation:g7Beam .7s .05s ease-out forwards}
+.g7-vfx.on .shock{animation:g7Shock .8s .18s cubic-bezier(.1,.9,.2,1) forwards}
+.g7-vfx.on .burst{animation:g7Burst .9s .05s ease-out forwards}
+.g7-vfx.on .spark:nth-child(4){animation:g7Spark1 .8s .05s forwards}.g7-vfx.on .spark:nth-child(5){animation:g7Spark2 .8s .08s forwards}.g7-vfx.on .spark:nth-child(6){animation:g7Spark3 .9s .1s forwards}.g7-vfx.on .spark:nth-child(7){animation:g7Spark4 .85s .04s forwards}.g7-vfx.on .spark:nth-child(8){animation:g7Spark5 .9s .12s forwards}.g7-vfx.on .spark:nth-child(9){animation:g7Spark6 .8s .08s forwards}
+.g7-text{position:absolute;left:50%;top:38%;z-index:32;transform:translate(-50%,-50%) scale(.7);opacity:0;text-align:center;pointer-events:none;font-weight:1000;text-shadow:0 0 25px currentColor}
+.g7-text .big{font-size:clamp(30px,10vw,64px);font-style:italic}.g7-text .small{font-size:9px;letter-spacing:.25em;margin-top:4px}
+.g7-text.on{animation:g7Text .65s cubic-bezier(.1,.9,.2,1) forwards}
+#cinema.g7.rarity-ur .g7-text{color:#ffe36b}#cinema.g7.rarity-ssr .g7-text{color:#ed77ff}#cinema.g7.rarity-sr .g7-text{color:#62dcff}
+@keyframes g7Bg{to{transform:scale(1.08)}}@keyframes g7Spin{to{transform:rotate(360deg)}}@keyframes g7Float{50%{transform:translateY(-13px) scale(1.035)}}@keyframes g7SpinCapsule{to{transform:rotate(360deg) scale(1.04)}}@keyframes g7Drop{0%{transform:translateY(-20px) scale(1)}70%{transform:translateY(150px) scale(.9)}100%{transform:translateY(205px) scale(.12);opacity:0}}@keyframes g7ButtonIn{to{opacity:1;transform:translateX(-50%) scale(1)}}@keyframes g7ButtonPulse{50%{box-shadow:0 0 55px #777affdd,0 0 100px #e34cff66}}@keyframes g7Beam{0%{opacity:0;transform:translateX(-50%) scaleY(.05)}35%{opacity:1}100%{opacity:0;transform:translateX(-50%) scaleY(1)}}@keyframes g7Shock{0%{opacity:0;transform:translate(-50%,-50%) scale(.1)}30%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) scale(13)}}@keyframes g7Burst{0%{opacity:0;transform:scale(.3) rotate(0)}30%{opacity:1}100%{opacity:0;transform:scale(1.2) rotate(35deg)}}@keyframes g7Text{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}35%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.05)}}
+@keyframes g7Spark1{to{opacity:0;transform:translate(-130px,-180px) scale(.2)}}@keyframes g7Spark2{to{opacity:0;transform:translate(140px,-170px) scale(.2)}}@keyframes g7Spark3{to{opacity:0;transform:translate(-170px,-30px) scale(.1)}}@keyframes g7Spark4{to{opacity:0;transform:translate(175px,-50px) scale(.1)}}@keyframes g7Spark5{to{opacity:0;transform:translate(-80px,120px) scale(.1)}}@keyframes g7Spark6{to{opacity:0;transform:translate(90px,110px) scale(.1)}}
+</style>
+<script>
+// Ver.7.2: replace the cinematic sequence with a faster, colorful game-like flow.
+(function(){
+  function vfx(){
+    let x=document.getElementById('g7Vfx');
+    if(!x){x=document.createElement('div');x.id='g7Vfx';x.className='g7-vfx';x.innerHTML='<div class="beam"></div><div class="shock"></div><div class="burst"></div>'+Array.from({length:6},()=>'<i class="spark"></i>').join('');document.getElementById('cinema').appendChild(x)}
+    return x;
+  }
+  function g7Text(msg,sub){let x=document.getElementById('g7Text');if(!x){x=document.createElement('div');x.id='g7Text';x.className='g7-text';x.innerHTML='<div class="big"></div><div class="small"></div>';document.getElementById('cinema').appendChild(x)}x.querySelector('.big').textContent=msg;x.querySelector('.small').textContent=sub||'';x.classList.remove('on');void x.offsetWidth;x.classList.add('on')}
+  function msg(t){let x=document.getElementById('gameMessage');if(x)x.textContent=t}
+  window.gachaStage=function(stage){
+    const o=document.getElementById('cinema'),orb=document.getElementById('gachaOrb'),rar=document.getElementById('gachaRarity'),burst=document.getElementById('gachaBurst'),rays=document.getElementById('gachaRays'),pc=document.getElementById('physicalCapsule'),btn=document.getElementById('openHatch');
+    if(!o)return;
+    o.classList.add('g7');
+    const c=cinemaMode===10?(cinemaGot?.find(x=>x.c.rarity==='UR')?.c||cinemaGot?.find(x=>x.c.rarity==='SSR')?.c||cinemaGot?.[0]?.c):cinemaResult;
+    if(stage===1){msg('カプセルが召喚される…');pc.className='physical-capsule';pc.style.opacity='0';setTimeout(()=>{pc.style.opacity='1';pc.classList.add('ready')},120);tone(260,.12,'sine',.035);tone(520,.2,'triangle',.03,.08)}
+    if(stage===2){msg('エネルギー充填中…');pc.classList.remove('ready');pc.classList.add('spin');o.classList.add('charge');for(let i=0;i<3;i++)tone(220+i*140,.16,'square',.025,i*.12);playCharge()}
+    if(stage===3&&c){const rc=rarityColor(c);o.classList.remove('rarity-sr','rarity-ssr','rarity-ur');o.classList.add(rarityClass(c));rar.textContent='';rar.style.color=rc;rar.style.setProperty('--rarityGlow',rc);rar.classList.add('show');pc.classList.remove('spin');pc.classList.add('ready');msg(c.rarity==='UR'?'……虹色の輝き。':'何かがおかしい……！');g7Text(c.rarity==='UR'?'LEGENDARY':c.rarity==='SSR'?'SUPER RARE':'RARE','SPECIAL SIGNAL DETECTED');const vx=vfx();vx.classList.remove('on');void vx.offsetWidth;vx.classList.add('on');playDecision(c.rarity);}
+    if(stage===4&&c){msg(c.rarity==='UR'?'究極の社員が、目を覚ます…':'カプセルを開けろ！');pc.classList.remove('ready','spin');pc.classList.add('drop');rar.classList.remove('show');burst.style.setProperty('--burst',rarityColor(c));burst.classList.add('on');rays.classList.add('on');hitFlash();setTimeout(()=>playGateOpen(c),100);if(c.rarity==='UR'){o.classList.add('scene-ur');playURClimax()}else playDrop()}
+    if(stage===5&&c){msg(c.rarity==='UR'?'TAPしてUR社員を解放！':'TAPして社員を解放！');pc.classList.add('ready');btn.className='open-hatch ready '+(c.rarity==='UR'?'ur':'');btn.textContent=cinemaMode===10?'TAP TO OPEN 10 CAPSULES':'TAP TO OPEN';openReady=true;playRotor()}
+  };
+  window.openHatch=function(){
+    if(!openReady||busy===false)return;openReady=false;const o=document.getElementById('cinema'),btn=document.getElementById('openHatch'),pc=document.getElementById('physicalCapsule');const c=cinemaMode===10?(cinemaGot?.find(x=>x.c.rarity==='UR')?.c||cinemaGot?.[0]?.c):cinemaResult;if(!c)return;btn.classList.remove('ready');pc.classList.remove('ready','drop');pc.classList.add('opened');msg(c.rarity==='UR'?'LEGENDARY RECRUITMENT!':'社員を召喚！');const vx=vfx();vx.classList.remove('on');void vx.offsetWidth;vx.classList.add('on');playHatchClick(c);setTimeout(()=>playHatchBurst(c),100);hitFlash();setTimeout(()=>gachaRevealFinal(),560);
+  };
+  window.startCinema=function(num){
+    const o=document.getElementById('cinema');if(busy===false)return;clearCinemaTimers();cinemaMode=num;cinemaResult=null;cinemaStart=performance.now();openReady=false;o.className='cinema g7 show';o.style.removeProperty('display');o.style.removeProperty('visibility');o.style.removeProperty('pointer-events');document.getElementById('gachaResultImg').className='gacha-result-img';document.getElementById('gachaName').className='gacha-name';document.getElementById('gachaSub').className='gacha-sub';document.getElementById('gachaRarity').className='gacha-rarity';document.getElementById('gachaBurst').className='gacha-burst';document.getElementById('gachaRays').className='gacha-rays';document.getElementById('gachaMachine').classList.remove('hidden');if(num===10)prepareCandidates();else cinemaResult=weighted();playMachineStart();playBgm();updateCinemaClock();cinemaTimer=setInterval(updateCinemaClock,50);cinemaTimeouts.push(setTimeout(()=>gachaStage(1),250));cinemaTimeouts.push(setTimeout(()=>gachaStage(2),1050));cinemaTimeouts.push(setTimeout(()=>gachaStage(3),2450));cinemaTimeouts.push(setTimeout(()=>gachaStage(4),3800));cinemaTimeouts.push(setTimeout(()=>gachaStage(5),4650));
+  };
+})();
+</script>
 </body></html>
