@@ -1,4 +1,4 @@
-<!-- AI Employee Gacha V7.5 DISPLAY FIX -->
+<!-- AI Employee Gacha V8.0 EMERGENCY OPEN FIX -->
 <!doctype html>
 <html lang="ja">
 <head>
@@ -303,7 +303,7 @@ body{background:radial-gradient(circle at 50% -10%,#253c88 0,#101633 28%,#070916
 <body><main class="app">
 <header class="hero"><div class="eyebrow">AI EMPLOYEE GACHA</div><div class="title">AI社員7人ガチャ</div><div class="sub">集めるだけじゃない。社員を働かせて、会社を育てよう。</div></header><button id="soundBtn" class="sound-btn" onclick="toggleSound()">🔊 サウンド ON</button>
 <div class="topbar"><div class="stat"><b id="coins">1,000</b><span>💰 コイン</span></div><div class="stat"><b id="companyLevel">Lv.1</b><span>🏢 会社レベル</span></div><div class="stat"><b id="rate">0%</b><span>📚 収集率</span></div><div class="stat"><b id="pulls">0</b><span>🎯 ガチャ回数</span></div></div>
-<section class="machine"><div style="text-align:center;letter-spacing:.24em;font-size:10px;color:#c4d2e9;margin-bottom:10px;position:relative;z-index:2">AI EMPLOYEE CAPSULE</div><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.7.0：カラフルなゲーム演出で社員を召喚。</div></section>
+<section class="machine"><div style="text-align:center;letter-spacing:.24em;font-size:10px;color:#c4d2e9;margin-bottom:10px;position:relative;z-index:2">AI EMPLOYEE CAPSULE</div><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.8.0：ガチャ開始後すぐに開封できます。</div></section>
 <section id="result" class="result"><div class="card"><div id="rarity" class="rarity"></div><div id="newBadge" class="new-badge" style="display:none">✨ NEW!</div><img id="resultImg"><div class="info"><div id="resultRole" class="role"></div><div id="resultName" class="name"></div><div id="resultDesc" class="desc"></div><div id="quote" class="quote"></div></div></div></section>
 <section class="panel"><div class="panel-title"><h2>💼 今日の仕事</h2><span class="muted">社員を派遣して報酬GET</span></div><div id="jobs" class="jobs"></div></section>
 <section class="panel"><div class="panel-title"><h2>👥 社員育成</h2><span class="muted">LvUP＋能力強化</span></div><div id="employees" class="employees"></div></section>
@@ -325,7 +325,7 @@ body{background:radial-gradient(circle at 50% -10%,#253c88 0,#101633 28%,#070916
    <div id="gachaOrb" class="gacha-orb"></div>
    <div id="gachaRarity" class="gacha-rarity"></div><img id="gachaResultImg" class="gacha-result-img">
    <div id="gachaName" class="gacha-name"></div><div id="gachaSub" class="gacha-sub"></div><div id="gacha10" class="gacha-10"></div>
-   <button id="openHatch" class="open-hatch" onclick="openHatch()">TAP TO OPEN</button><div class="tap-ripple"></div><div class="hatch-caption">TAP TO RELEASE</div>
+   <button id="openHatch" class="open-hatch ready" style="display:block!important;opacity:1!important;pointer-events:auto!important;z-index:9999!important;" onclick="openHatch()">TAP TO OPEN</button><div class="tap-ripple"></div><div class="hatch-caption">TAP TO RELEASE</div>
  </div>
  <div class="cinema-bg"></div><div class="cinema-dim"></div><div class="cinema-window"><i></i><i></i></div><div class="c-floor"></div><div class="c-table"></div><div id="cDoor" class="c-door"></div><img id="cCandidate" class="c-candidate"><div id="cQuote" class="c-quote"></div><div id="cCandidates" class="c-candidates"></div><div id="cDecision" class="c-decision"><div class="decision-word">FINAL DECISION</div><div class="decision-sub">AI EMPLOYEE MANAGEMENT SYSTEM</div></div>
  <div class="c-person p1"></div><div class="c-person p2"></div><div class="c-person p3"></div><div class="c-person p4"></div>
@@ -414,7 +414,7 @@ function prepareCandidates(){const box=document.getElementById('cCandidates');bo
 function resetGachaVisual(){
  const ids=['gachaOrb','gachaRarity','gachaResultImg','gachaName','gachaSub','gachaBurst','gachaRays','gacha10'];
  ids.forEach(id=>{const e=document.getElementById(id);if(e)e.className=e.id==='gachaOrb'?'gacha-orb':e.id==='gachaRarity'?'gacha-rarity':e.id==='gachaResultImg'?'gacha-result-img':e.id==='gachaName'?'gacha-name':e.id==='gachaSub'?'gacha-sub':e.id==='gachaBurst'?'gacha-burst':e.id==='gachaRays'?'gacha-rays':'gacha-10';});
- document.getElementById('gachaResultImg').src='';document.getElementById('gachaName').textContent='';document.getElementById('gachaSub').textContent='';document.getElementById('gachaRarity').textContent='';document.getElementById('gacha10').innerHTML='';openReady=false;const pc=document.getElementById('physicalCapsule');if(pc)pc.className='physical-capsule';const ro=document.getElementById('rotor');if(ro)ro.className='rotor';const oh=document.getElementById('openHatch');if(oh){oh.className='open-hatch';oh.textContent='TAP TO OPEN';}document.getElementById('cinema').classList.remove('hatch-open','door-phase','rarity-ur','rarity-ssr','rarity-sr');const ant=document.getElementById('rarityAnticipation');if(ant)ant.className='rarity-anticipation';const rw=document.getElementById('reelWarning');if(rw)rw.className='reel-warning';const br=document.getElementById('bizReels');if(br)br.classList.remove('on');
+ document.getElementById('gachaResultImg').src='';document.getElementById('gachaName').textContent='';document.getElementById('gachaSub').textContent='';document.getElementById('gachaRarity').textContent='';document.getElementById('gacha10').innerHTML='';openReady=false;const pc=document.getElementById('physicalCapsule');if(pc)pc.className='physical-capsule';const ro=document.getElementById('rotor');if(ro)ro.className='rotor';const oh=document.getElementById('openHatch');if(oh){oh.className='open-hatch ready';oh.textContent='TAP TO OPEN';oh.style.setProperty('display','block','important');oh.style.setProperty('opacity','1','important');oh.style.setProperty('pointer-events','auto','important');}document.getElementById('cinema').classList.remove('hatch-open','door-phase','rarity-ur','rarity-ssr','rarity-sr');const ant=document.getElementById('rarityAnticipation');if(ant)ant.className='rarity-anticipation';const rw=document.getElementById('reelWarning');if(rw)rw.className='reel-warning';const br=document.getElementById('bizReels');if(br)br.classList.remove('on');
 }
 function rarityClass(c){return c.rarity==='UR'?'biz-ur':c.rarity==='SSR'?'biz-ssr':c.rarity==='SR'?'biz-sr':'biz-r'}
 function rarityColor(c){return c.rarity==='UR'?'#ffd45c':c.rarity==='SSR'?'#b58cff':c.rarity==='SR'?'#62baff':'#d8e2f5'}
@@ -427,7 +427,7 @@ function startCinema(num){
   // The previous version was reaching stage 1 but the main thread could be held
   // by optional effects, so the timers never advanced on some mobile browsers.
   clearCinemaTimers();
-  cinemaMode=num; cinemaResult=null; cinemaStart=Date.now(); openReady=false;
+  cinemaMode=num; cinemaResult=null; cinemaStart=Date.now(); openReady=true;
   if(num===10) prepareCandidates(); else cinemaResult=weighted();
   setBusy(true);
 
