@@ -264,7 +264,7 @@
 @keyframes warningPulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.05)}}
 
 /* Ver.4.9 DOM order + cinematic stability patch */
-.cinema{display:none !important;visibility:hidden;pointer-events:none;}
+.cinema:not(.show){display:none !important;visibility:hidden !important;pointer-events:none !important}.cinema.show{display:block !important;visibility:visible !important;pointer-events:auto !important}
 .cinema.show{display:block !important;visibility:visible;pointer-events:auto;}
 .cinema:not(.show){visibility:hidden !important;pointer-events:none !important;}
 .cinema.show .scene-video{visibility:visible;}
@@ -398,8 +398,23 @@ function animate(done){const cap=document.getElementById('capsule');cap.classLis
 function setBusy(v){busy=v;document.getElementById('oneBtn').disabled=v;document.getElementById('tenBtn').disabled=v}
 function addXp(c,amount){let x=levels[c.id];x.xp+=amount;while(x.xp>=100){x.xp-=100;x.lv++;toast(`🎉 ${c.name} がLv.${x.lv}になった！`)}}
 function pull(num){
- if(busy)return;const cost=num===10?900:100;if(coins<cost){toast('💰 コインが足りません。仕事をして稼ごう！');return}
- coins-=cost;setBusy(true);startCinema(num);
+ try{
+   if(busy)return;
+   const cost=num===10?900:100;
+   if(coins<cost){toast('💰 コインが足りません。仕事をして稼ごう！');return}
+   initAudio();
+   coins-=cost;
+   save();
+   setBusy(true);
+   startCinema(num);
+ }catch(err){
+   console.error('pull error:',err);
+   busy=false;
+   try{update();}catch(e){}
+   const o=document.getElementById('cinema');
+   if(o){o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');}
+   try{toast('ガチャを開始できませんでした。もう一度お試しください。');}catch(e){}
+ }
 }
 function tenPull(){ /* cinematic flow handles the result */ }
 
@@ -442,9 +457,8 @@ function startCinema(num){
     clearCinemaTimers();
     cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
     resetGachaVisual();
-    o.className='cinema';
+    o.className='cinema show';
     o.style.setProperty('display','block','important');o.style.setProperty('visibility','visible','important');o.style.setProperty('pointer-events','auto','important');
-    o.classList.add('show');
     setScene('city');
     document.getElementById('cProgressBar').style.width='0%';
     document.getElementById('cTime').textContent='00.0 / 12.0';
@@ -557,6 +571,12 @@ document.addEventListener('DOMContentLoaded',()=>{
     update();
     save();
   }catch(e){console.error('AI Employee Gacha init error',e)}
+});
+// Ver.7.3: direct button binding fallback. This prevents inline-handler/CSP quirks from blocking the gacha.
+document.addEventListener('DOMContentLoaded',()=>{
+  const one=document.getElementById('oneBtn'), ten=document.getElementById('tenBtn');
+  if(one){one.onclick=(e)=>{e.preventDefault();pull(1);};}
+  if(ten){ten.onclick=(e)=>{e.preventDefault();pull(10);};}
 });
 </script>
 
