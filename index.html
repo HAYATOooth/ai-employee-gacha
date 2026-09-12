@@ -263,47 +263,56 @@
 @keyframes antFlash{0%{opacity:0}30%{opacity:.9}100%{opacity:0}}
 @keyframes warningPulse{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.05)}}
 
-/* Ver.5.1 hard reset: cinematic layer is forcibly hidden on every page lifecycle event */
-.cinema{display:none !important;visibility:hidden;pointer-events:none;}.cinema.cinema-active{display:block !important;visibility:visible !important;pointer-events:auto !important;}
-.cinema.show{display:none !important;visibility:hidden !important;pointer-events:none !important;}
-.cinema:not(.cinema-active){display:none !important;visibility:hidden !important;pointer-events:none !important;}
+/* Ver.4.9 DOM order + cinematic stability patch */
+.cinema{display:none !important;visibility:hidden;pointer-events:none;}
+.cinema.show{display:block !important;visibility:visible;pointer-events:auto;}
+.cinema:not(.show){visibility:hidden !important;pointer-events:none !important;}
 .cinema.show .scene-video{visibility:visible;}
-
-/* V6.3 CSS FLOW: cinematic progression is driven by CSS animations, not JS clocks/timers. */
-.cinema.css-flow .gacha-machine{opacity:1!important}
-.cinema.css-flow .rotor{animation:rotorCssFlow 8.5s linear infinite!important}
-.cinema.css-flow .physical-capsule{opacity:1!important;animation:capsuleCssFlow 8.5s cubic-bezier(.15,.8,.2,1) forwards!important}
-.cinema.css-flow .biz-reels{opacity:0;animation:reelsCssFlow 8.5s ease forwards}
-.cinema.css-flow .cinema-bg{animation:bgCssFlow 8.5s ease-in-out forwards}
-.cinema.css-flow .c-progress b{width:0!important;animation:progressCssFlow 8.5s linear forwards!important}
-.cinema.css-flow .c-time{font-size:0!important}
-.cinema.css-flow .c-time:after{content:"演出進行中";font-size:10px;letter-spacing:.08em}
-.cinema.css-flow .open-hatch{opacity:0;pointer-events:auto!important;animation:hatchCssFlow 8.5s ease forwards!important}
-@keyframes rotorCssFlow{0%,18%{transform:rotate(0deg)}28%{transform:rotate(180deg)}45%,70%{transform:rotate(900deg)}100%{transform:rotate(1800deg)}}
-@keyframes capsuleCssFlow{0%{opacity:0;transform:translate(-50%,-50%) scale(.75)}8%{opacity:1;transform:translate(-50%,-50%) scale(1)}25%{transform:translate(-50%,-50%) rotate(-7deg) scale(1)}35%{transform:translate(-50%,-50%) rotate(7deg) scale(1.05)}45%{transform:translate(-50%,-50%) rotate(-6deg) scale(1.08)}58%{transform:translate(-50%,-50%) rotate(3deg) scale(1.1)}72%{transform:translate(-50%,85vh) rotate(540deg) scale(.85);opacity:1}82%{transform:translate(-50%,85vh) rotate(720deg) scale(.85);opacity:1}100%{transform:translate(-50%,85vh) rotate(900deg) scale(.85);opacity:1}}
-@keyframes reelsCssFlow{0%,24%{opacity:0;transform:translateY(8px)}28%,68%{opacity:1;transform:none}82%,100%{opacity:.35;transform:none}}
-@keyframes bgCssFlow{0%,20%{filter:brightness(.72)}45%{filter:brightness(.95) saturate(1.1)}75%{filter:brightness(1.15) saturate(1.3)}100%{filter:brightness(1.05)}}
-@keyframes progressCssFlow{from{width:0!important}to{width:100%!important}}
-@keyframes hatchCssFlow{0%,67%{opacity:0;transform:translateX(-50%) scale(.8)}74%{opacity:1;transform:translateX(-50%) scale(1.06)}79%,100%{opacity:1;transform:translateX(-50%) scale(1)}}
-.cinema.css-flow .cinema-flash{animation:flashFlow 8.5s ease-in-out infinite;opacity:0}
-@keyframes flashFlow{0%,48%,100%{opacity:0}53%{opacity:.28}56%{opacity:0}76%{opacity:.18}79%{opacity:0}}
-.cinema.css-flow .hatch-caption{animation:captionCssFlow 8.5s ease forwards}
-@keyframes captionCssFlow{0%,67%{opacity:0}74%,100%{opacity:1}}
-</style></head>
+</style><style id="ver7-ui">
+/* ===== AI社員7人ガチャ Ver.7.0 : high-energy mobile game UI ===== */
+:root{--cyan:#43e7ff;--blue:#586cff;--pink:#ff4fc3;--violet:#9b5cff;--gold:#ffd84d;--ink:#070a18}
+html{background:#050713}
+body{background:radial-gradient(circle at 50% -10%,#253c88 0,#101633 28%,#070916 66%,#03040a 100%);font-family:system-ui,-apple-system,"Noto Sans JP",sans-serif}
+.app{max-width:760px;padding:10px 10px 42px}
+.hero{position:relative;padding:16px 12px 14px;border-radius:24px;overflow:hidden;background:linear-gradient(135deg,#121a43dd,#28124ddd 52%,#0d1f45dd);border:1px solid #ffffff24;box-shadow:0 12px 40px #0008,inset 0 1px #ffffff20}
+.hero:before{content:"";position:absolute;inset:-60%;background:conic-gradient(from 0deg,transparent 0 22%,#43e7ff18 28%,transparent 34%,#ff4fc31a 48%,transparent 55%,#ffd84d16 72%,transparent 80%);animation:v7spin 12s linear infinite}
+.hero>*{position:relative;z-index:1}.eyebrow{font-weight:800;color:#8ff5ff;text-shadow:0 0 16px #43e7ff;letter-spacing:.28em}.title{font-size:clamp(31px,9vw,54px);line-height:1.05;text-shadow:0 4px 24px #000,0 0 28px #6677ff88}.sub{color:#eef2ff;font-weight:700;text-shadow:0 2px 8px #000}
+.topbar{gap:7px;margin:10px 0}.stat{background:linear-gradient(180deg,#182246ee,#0c1126ee);border:1px solid #7185ff44;border-radius:15px;padding:9px 8px;box-shadow:0 8px 22px #0005,inset 0 1px #fff1}.stat b{font-size:20px}.stat span{font-weight:700;color:#aebbf0}
+.machine{margin-top:10px;padding:16px 14px 14px;border-radius:28px;background:linear-gradient(180deg,#171d46ee,#0a0e22f2);border:1px solid #8090ff55;box-shadow:0 18px 55px #0009,inset 0 1px #ffffff18}.machine:after{content:"";position:absolute;left:8%;right:8%;top:11px;height:2px;background:linear-gradient(90deg,transparent,#43e7ff,#ff4fc3,#ffd84d,transparent);box-shadow:0 0 18px #43e7ff88;opacity:.8}
+.capsule{width:156px;height:156px;margin:10px auto 18px;background:radial-gradient(circle at 32% 25%,#fff 0 5%,#d7f2ff 13%,#74bfff 31%,#596bff 48%,#9a4fff 67%,#151839 100%);box-shadow:0 0 24px #43e7ff99,0 0 80px #8b55ff55,inset -18px -24px 30px #050719aa,inset 10px 8px 18px #fff8;border:2px solid #ffffff77;position:relative}.capsule:before{content:"";position:absolute;inset:11px;border-radius:50%;border:2px solid #ffffff35;border-top-color:#fff;transform:rotate(18deg)}.capsule:after{content:"AI";font-size:39px;color:#101737;text-shadow:0 1px #fff8}
+.buttons{gap:10px}.btn{min-height:60px;border-radius:17px;font-size:15px;background:linear-gradient(135deg,#4f6bff,#9b4fff 55%,#ff4fc3);box-shadow:0 10px 25px #6355ff55,inset 0 1px #fff5;position:relative;overflow:hidden}.btn:before{content:"";position:absolute;top:-80%;left:-25%;width:25%;height:260%;transform:rotate(22deg);background:#fff7;animation:v7shine 2.8s ease-in-out infinite}.btn.secondary{background:linear-gradient(135deg,#1e2854,#273c7a,#334a9b);border:1px solid #7587ff55}
+.panel,.collection{background:linear-gradient(180deg,#121a35ee,#0b1023ee);border:1px solid #596dba44;box-shadow:0 12px 32px #0006}.job,.employee,.mini{background:linear-gradient(145deg,#18234a,#0d1430);border-color:#687bcb55;box-shadow:0 8px 20px #0005}.job button{background:linear-gradient(135deg,#4d66ff,#9c50ff);box-shadow:0 5px 14px #4d66ff44}.employee button{background:linear-gradient(135deg,#263d80,#5946a5)}
+.mini img,.employee img{border:1px solid #ffffff22}.xp i{background:linear-gradient(90deg,#43e7ff,#586cff,#ff4fc3,#ffd84d)}
+/* Cinematic gacha */
+.cinema{background:#03040b!important;isolation:isolate}.cinema-bg{opacity:.7!important;filter:saturate(1.35) brightness(.78)!important;background:linear-gradient(180deg,#06081b66,#050617b8),url("gacha_bg.png") center/cover no-repeat!important}
+.cinema:before{content:""!important;z-index:2!important;background:radial-gradient(circle at 50% 48%,#ffffff0b 0 9%,#586cff20 18%,#ff4fc310 35%,#03040be8 78%)!important;pointer-events:none}.cinema:after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;background:radial-gradient(circle at 50% 45%,transparent 0 32%,#02030a88 78%),linear-gradient(180deg,transparent 70%,#02030acc);}
+.cinema-scan{opacity:.12!important;background:repeating-linear-gradient(180deg,transparent 0 7px,#fff1 8px 9px)!important;z-index:5!important}.gacha-neon{z-index:6!important}.gacha-neon .neon-bar{height:3px!important;border-radius:99px;filter:none!important;box-shadow:0 0 18px currentColor!important}.biz-hud{z-index:20!important;top:6%!important}.biz-hud span{background:#0b1030dd;border-color:#8b9aff66;color:#eaf3ff;box-shadow:0 0 18px #586cff33}.biz-hud .hot{color:#ffe58a;border-color:#ffd84d88;box-shadow:0 0 24px #ffd84d44}
+.gacha-machine{z-index:10!important;width:min(390px,92vw)!important;height:min(610px,76vh)!important}.machine-top{background:linear-gradient(145deg,#283d78,#111a43 45%,#090d24)!important;border:2px solid #91aaff66!important;box-shadow:0 25px 70px #000c,inset 0 0 60px #586cff22!important}.machine-top:before{background:radial-gradient(circle,#43e7ff1f,#151c4b 42%,#050718 76%)!important}.machine-brand{color:#dffaff!important;text-shadow:0 0 12px #43e7ff}.rotor{border-color:#79edff88!important;box-shadow:0 0 35px #43e7ff55,inset 0 0 35px #9b5cff33!important}.rotor:before{border-color:#ff4fc366!important}.rotor:after{border-color:#ffd84d55!important}.rotor i{background:linear-gradient(#fff,#43e7ff,#586cff)!important;box-shadow:0 0 14px #43e7ff!important}
+.physical-capsule{width:82px!important;height:104px!important;background:linear-gradient(135deg,#fff,#aeeaff 22%,#586cff 48%,#ff4fc3 74%,#11152f)!important;border-color:#fff9!important;box-shadow:0 0 25px #43e7ffcc,0 0 55px #ff4fc366,inset -10px -14px 18px #0009!important}.physical-capsule:after{background:#fff!important;box-shadow:0 0 16px #fff,0 0 30px #43e7ff!important}
+.gacha-rays{z-index:8!important;background:conic-gradient(from 0deg,transparent,#43e7ff44 5%,transparent 12%,#ff4fc344 20%,transparent 30%,#ffd84d55 40%,transparent 50%,#586cff44 60%,transparent 72%,#ff4fc344 82%,transparent)!important;mix-blend-mode:screen}.gacha-burst{z-index:12!important}.gacha-rarity{top:15%!important;font-size:clamp(38px,12vw,76px)!important;letter-spacing:.12em!important;text-shadow:0 0 12px currentColor,0 0 40px currentColor,0 4px 20px #000!important}.gacha-result-img{width:min(360px,78vw)!important;height:min(54vh,440px)!important;border-radius:28px!important;border:2px solid #fff8;box-shadow:0 0 35px currentColor,0 25px 100px #000!important;object-position:center!important}.gacha-name{font-size:clamp(29px,8vw,48px)!important;text-shadow:0 3px 0 #15152c,0 0 20px #fff,0 0 40px #ff4fc3!important}.gacha-sub{font-weight:900!important;color:#fff!important;text-shadow:0 0 12px #43e7ff!important}.open-hatch{bottom:9%!important;padding:15px 30px!important;font-size:13px!important;background:linear-gradient(135deg,#fff,#8fe8ff 30%,#6c67ff 62%,#ff4fc3)!important;border:2px solid #fff9!important;box-shadow:0 0 22px #43e7ff,0 0 60px #ff4fc366,0 12px 35px #000!important;animation:v7buttonPulse 1.15s ease-in-out infinite!important}.open-hatch.ur{background:linear-gradient(135deg,#fff,#fff3a5 25%,#ffd84d 58%,#ff8a00)!important;box-shadow:0 0 30px #ffd84d,0 0 80px #ff8a0066,0 12px 35px #000!important}.hatch-caption{bottom:25%!important;font-size:12px!important;color:#fff!important;text-shadow:0 0 14px #ff4fc3!important}
+/* rarity-specific color shifts */
+.cinema.rarity-sr{--v7c:#43e7ff}.cinema.rarity-ssr{--v7c:#c77dff}.cinema.rarity-ur{--v7c:#ffd84d}.cinema.rarity-sr .gacha-rays{filter:hue-rotate(0deg)}.cinema.rarity-ssr .gacha-rays{filter:hue-rotate(35deg)}.cinema.rarity-ur .gacha-rays{filter:hue-rotate(70deg) saturate(1.4)}
+/* make animation cheaper: transforms/opacity only */
+.scene-videos{z-index:1!important}.scene-video{will-change:opacity;transform:translateZ(0);backface-visibility:hidden}.cinema *{backface-visibility:hidden}.gacha-machine,.physical-capsule,.rotor,.gacha-rays,.gacha-burst,.open-hatch,.gacha-result-img,.gacha-name{will-change:transform,opacity}
+@keyframes v7spin{to{transform:rotate(360deg)}}@keyframes v7shine{0%,55%{left:-35%;opacity:0}65%{opacity:1}85%,100%{left:125%;opacity:0}}@keyframes v7buttonPulse{0%,100%{transform:translateX(-50%) scale(1);filter:brightness(1)}50%{transform:translateX(-50%) scale(1.045);filter:brightness(1.12)}}
+@media(max-width:500px){.app{padding:8px 8px 34px}.hero{padding:14px 10px 12px;border-radius:21px}.title{font-size:34px}.topbar{display:grid;grid-template-columns:repeat(4,1fr)}.stat{min-width:0;padding:8px 5px}.stat b{font-size:17px}.stat span{font-size:9px}.machine{border-radius:24px}.gacha-machine{height:68vh!important}.gacha-result-img{height:45vh!important}.gacha-rarity{top:13%!important}.gacha-name{bottom:16%!important}.gacha-sub{bottom:11.5%!important}.open-hatch{bottom:7%!important}}
+@media(prefers-reduced-motion:reduce){.hero:before,.btn:before,.open-hatch{animation:none!important}.scene-video{transition:none!important}}
+</style>
+</head>
 <body><main class="app">
 <header class="hero"><div class="eyebrow">AI EMPLOYEE GACHA</div><div class="title">AI社員7人ガチャ</div><div class="sub">集めるだけじゃない。社員を働かせて、会社を育てよう。</div></header><button id="soundBtn" class="sound-btn" onclick="toggleSound()">🔊 サウンド ON</button>
 <div class="topbar"><div class="stat"><b id="coins">1,000</b><span>💰 コイン</span></div><div class="stat"><b id="companyLevel">Lv.1</b><span>🏢 会社レベル</span></div><div class="stat"><b id="rate">0%</b><span>📚 収集率</span></div><div class="stat"><b id="pulls">0</b><span>🎯 ガチャ回数</span></div></div>
-<section class="machine"><div style="text-align:center;letter-spacing:.24em;font-size:10px;color:#c4d2e9;margin-bottom:10px;position:relative;z-index:2">AI EMPLOYEE CAPSULE</div><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.6.2：ガチャ演出は「引く」ボタンを押した時だけ生成されます。</div></section>
+<section class="machine"><div style="text-align:center;letter-spacing:.24em;font-size:10px;color:#c4d2e9;margin-bottom:10px;position:relative;z-index:2">AI EMPLOYEE CAPSULE</div><div id="capsule" class="capsule"></div><div class="buttons"><button id="oneBtn" class="btn" onclick="pull(1)">🎯 1人引く<br><small>100コイン</small></button><button id="tenBtn" class="btn secondary" onclick="pull(10)">✨ 10連ガチャ<br><small>900コイン</small></button></div><div class="hint">Ver.7.0：カラフルなゲーム演出で社員を召喚。</div></section>
 <section id="result" class="result"><div class="card"><div id="rarity" class="rarity"></div><div id="newBadge" class="new-badge" style="display:none">✨ NEW!</div><img id="resultImg"><div class="info"><div id="resultRole" class="role"></div><div id="resultName" class="name"></div><div id="resultDesc" class="desc"></div><div id="quote" class="quote"></div></div></div></section>
 <section class="panel"><div class="panel-title"><h2>💼 今日の仕事</h2><span class="muted">社員を派遣して報酬GET</span></div><div id="jobs" class="jobs"></div></section>
 <section class="panel"><div class="panel-title"><h2>👥 社員育成</h2><span class="muted">LvUP＋能力強化</span></div><div id="employees" class="employees"></div></section>
 <section class="collection"><div class="section-title"><h2>📚 キャラクター図鑑</h2><span id="collectionText">7人中0人</span></div><div id="grid" class="grid"></div></section>
-<div class="foot">AI社員チーム・Gacha v6.4 / 7 Characters<br><span style="font-size:10px;letter-spacing:.18em;opacity:.7">BUILD V6.4-AUDIO-FIX</span></div></main>
+<div class="foot">AI社員チーム・Gacha v7.0 / 7 Characters</div></main>
 <div id="modal" class="modal"><div class="modal-box"><button class="close" onclick="closeModal()">閉じる</button><h2>✨ 10連結果</h2><div id="tenGrid" class="ten-grid"></div></div></div>
 <div id="detail" class="detail"><div class="detail-box"><button class="detail-close" onclick="closeDetail()">×</button><img id="detailImg"><div class="info"><div id="detailRole" class="role"></div><div id="detailName" class="name"></div><div id="detailDesc" class="desc"></div><div id="detailQuote" class="quote"></div></div></div></div>
 <div id="toast" class="toast"></div><div id="super" class="super"></div>
-<template id="cinemaTemplate"><div id="cinema" class="cinema" style="display:none!important;visibility:hidden;pointer-events:none;"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
- <div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div><div id="anticipationFlash" class="anticipation-flash"></div><div id="reelWarning" class="reel-warning">SPECIAL PATTERN</div><div id="rarityAnticipation" class="rarity-anticipation"><div class="big" id="rarityAntBig"></div><div class="small" id="rarityAntSmall"></div></div>
+<div id="cinema" class="cinema" style="display:none!important;visibility:hidden;pointer-events:none;"><div class="gacha-neon"><div class="neon-bar b1"></div><div class="neon-bar b2"></div><div class="neon-bar b3"></div></div><div class="biz-hud"><span>EXECUTIVE FLOOR</span><span class="hot">LIVE SELECTION</span><span>AI RECRUITMENT</span></div><div id="bizReels" class="biz-reels"><div class="biz-reel">PLAN</div><div class="biz-reel">DATA</div><div class="biz-reel hot">???</div></div>
+ </div><div class="scene-videos" aria-hidden="true"><video id="sceneCity" class="scene-video active" src="scene_city.mp4" autoplay muted loop playsinline preload="auto"></video><video id="scenePurple" class="scene-video" src="scene_purple.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneGold" class="scene-video" src="scene_gold.mp4" autoplay muted loop playsinline preload="auto"></video><video id="sceneUR" class="scene-video" src="scene_ur.mp4" autoplay muted loop playsinline preload="auto"></video></div><div class="cinema-scan"></div><div id="cinemaFlash" class="cinema-flash"></div><div id="urBlackout" class="ur-blackout"></div><div id="urTitle" class="ur-title">LEGENDARY APPOINTMENT</div><div id="anticipationFlash" class="anticipation-flash"></div><div id="reelWarning" class="reel-warning">SPECIAL PATTERN</div><div id="rarityAnticipation" class="rarity-anticipation"><div class="big" id="rarityAntBig"></div><div class="small" id="rarityAntSmall"></div></div>
  <button class="c-skip" onclick="finishCinema(true)">スキップ</button>
  <div class="capsule-stage">
 <div class="hatch-vignette"></div><div id="hatchVfx" class="hatch-vfx"><div class="hatch-glow"></div><div class="hatch-beam"></div><div class="hatch-ring"></div><div class="hatch-particles"><i></i><i></i><i></i><i></i><i></i><i></i></div></div><div class="hatch-half top"></div><div class="hatch-half bottom"></div>
@@ -325,7 +334,7 @@
  <div id="c10" class="c-10"><div class="c-10-title">10人の候補者、入室。</div><div class="c-10-sub">これからチームが決まります。</div></div>
  <div id="cResult" class="c-result"><img id="cImg"><div class="c-info"><div id="cRarity" class="c-rarity"></div><div id="cName" class="c-name"></div><div id="cMsg" class="c-message"></div></div><div id="cStamp" class="c-stamp">APPROVED</div></div>
  <div class="c-progress"><b id="cProgressBar"></b></div><div id="cTime" class="c-time">00.0 / 12.0</div>
-</div></template>
+</div>
 <script>
 const chars=[
 {id:'president',name:'社長',role:'社長（あなた）',rarity:'UR',img:'1641.png',desc:'チームの最終判断を担う。7人目としてガチャに正式参戦。',quote:'「全員、仕事を始めよう。」',job:'経営判断',reward:180,xp:40},
@@ -375,11 +384,11 @@ function pull(num){
 }
 function tenPull(){ /* cinematic flow handles the result */ }
 
-let cinemaTimer=null,cinemaRaf=null,cinemaMode=1,cinemaResult=null,cinemaGot=null,cinemaStart=0,cinemaTimeouts=[],cinemaStage=0,audioCtx=null,soundOn=localStorage.getItem('ai_employee_gacha_sound')!=='off',bgmTimer=null,openReady=false;
+let cinemaTimer=null,cinemaMode=1,cinemaResult=null,cinemaGot=null,cinemaStart=0,cinemaTimeouts=[],audioCtx=null,soundOn=localStorage.getItem('ai_employee_gacha_sound')!=='off',bgmTimer=null,openReady=false;
 function initAudio(){if(!soundOn)return;try{if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();}catch(e){}}
 function tone(freq,dur,type='sine',gain=.04,delay=0){if(!soundOn)return;initAudio();if(!audioCtx)return;const t=audioCtx.currentTime+delay,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(gain,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+dur+.03)}
 function noise(dur=.18,gain=.035,delay=0){if(!soundOn)return;initAudio();if(!audioCtx)return;const len=Math.floor(audioCtx.sampleRate*dur),buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate),data=buf.getChannelData(0);for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*Math.pow(1-i/len,2);const s=audioCtx.createBufferSource(),f=audioCtx.createBiquadFilter(),g=audioCtx.createGain(),t=audioCtx.currentTime+delay;f.type='lowpass';f.frequency.value=1800;g.gain.setValueAtTime(gain,t);g.gain.exponentialRampToValueAtTime(.0001,t+dur);s.buffer=buf;s.connect(f).connect(g).connect(audioCtx.destination);s.start(t);}
-function sweep(startFreq,endFreq,dur=.75,gain=.07,delay=0,type='sawtooth'){if(!soundOn)return;if(typeof delay==='string'){type=delay;delay=0}initAudio();if(!audioCtx)return;const t=audioCtx.currentTime+delay,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(startFreq,t);o.frequency.exponentialRampToValueAtTime(endFreq,t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(gain,t+.06);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+dur+.04)}
+function sweep(startFreq,endFreq,dur=.75,gain=.07,delay=0,type='sawtooth'){if(!soundOn)return;initAudio();if(!audioCtx)return;const t=audioCtx.currentTime+delay,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(startFreq,t);o.frequency.exponentialRampToValueAtTime(endFreq,t+dur);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(gain,t+.06);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+dur+.04)}
 function musicKick(delay=0){if(!soundOn)return;initAudio();if(!audioCtx)return;const t=audioCtx.currentTime+delay;const o=audioCtx.createOscillator(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter();o.type='sawtooth';o.frequency.setValueAtTime(52,t);o.frequency.exponentialRampToValueAtTime(118,t+.18);f.type='lowpass';f.frequency.setValueAtTime(900,t);f.frequency.exponentialRampToValueAtTime(2400,t+.12);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.08,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+.32);o.connect(f).connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+.35)}
 function playHatchClick(c){musicKick();tone(160,.08,'square',.035,.02);tone(320,.09,'square',.028,.08);noise(.06,.045,.03);sweep(c?.rarity==='UR'?380:280,c?.rarity==='UR'?4200:2200,.72,c?.rarity==='UR'?.11:.075,.13,'sawtooth');[c?.rarity==='UR'?523.25:392,c?.rarity==='UR'?783.99:523.25,c?.rarity==='UR'?1046.5:659.25].forEach((f,i)=>tone(f,.65,'triangle',.055,.22+i*.09))}
 function playHatchBurst(c){if(!soundOn)return;noise(.16,.09,.0);tone(58,.55,'sine',.11,.02);sweep(c?.rarity==='UR'?180:130,c?.rarity==='UR'?3600:1900,1.05,c?.rarity==='UR'?.14:.085,.04,'sawtooth');[261.63,329.63,392,523.25,659.25].forEach((f,i)=>tone(f,.55,'triangle',c?.rarity==='UR'?.065:.04,.12+i*.07));if(c?.rarity==='UR'){[783.99,1046.5,1318.5,1567.98].forEach((f,i)=>tone(f,.7,'sine',.055,.42+i*.08));}}
@@ -399,7 +408,7 @@ function hitFlash(){const f=document.getElementById('cinemaFlash');if(!f)return;
 function setScene(kind){const o=document.getElementById('cinema');o.classList.remove('scene-purple','scene-gold','scene-ur');const all=[document.getElementById('sceneCity'),document.getElementById('scenePurple'),document.getElementById('sceneGold'),document.getElementById('sceneUR')];all.forEach(v=>v&&v.classList.remove('active'));let v=kind==='purple'?document.getElementById('scenePurple'):kind==='gold'?document.getElementById('sceneGold'):kind==='ur'?document.getElementById('sceneUR'):document.getElementById('sceneCity');if(v){v.classList.add('active');try{v.currentTime=(kind==='gold'?.45:kind==='purple'?.2:kind==='ur'?0:0);v.play().catch(()=>{});}catch(e){}}if(kind==='purple')o.classList.add('scene-purple');if(kind==='gold')o.classList.add('scene-gold');if(kind==='ur')o.classList.add('scene-ur')}
 function toggleSound(){soundOn=!soundOn;localStorage.setItem('ai_employee_gacha_sound',soundOn?'on':'off');document.getElementById('soundBtn').textContent=soundOn?'🔊 サウンド ON':'🔇 サウンド OFF';document.getElementById('soundBtn').classList.toggle('off',!soundOn);if(soundOn){initAudio();tone(660,.12,'sine',.04)}}
 function renderSoundButton(){const b=document.getElementById('soundBtn');if(!b)return;b.textContent=soundOn?'🔊 サウンド ON':'🔇 サウンド OFF';b.classList.toggle('off',!soundOn)}
-function clearCinemaTimers(){cinemaTimeouts.forEach(clearTimeout);cinemaTimeouts=[];clearInterval(cinemaTimer);cinemaTimer=null;if(cinemaRaf){cancelAnimationFrame(cinemaRaf);cinemaRaf=null}stopBgm()}
+function clearCinemaTimers(){cinemaTimeouts.forEach(clearTimeout);cinemaTimeouts=[];clearInterval(cinemaTimer);stopBgm()}
 function prepareCandidates(){const box=document.getElementById('cCandidates');box.innerHTML='';if(cinemaMode!==10){box.classList.remove('show');return}cinemaGot=[];for(let i=0;i<10;i++){const c=weighted();cinemaGot.push({c,isNew:!owned[c.id]});const d=document.createElement('div');d.className='cand-chip '+c.rarity.toLowerCase();d.innerHTML=`<img src="${c.img}" alt="">`;d.style.animationDelay=(i*.13)+'s';box.appendChild(d)}box.classList.remove('show')}
 function resetGachaVisual(){
  const ids=['gachaOrb','gachaRarity','gachaResultImg','gachaName','gachaSub','gachaBurst','gachaRays','gacha10'];
@@ -408,58 +417,40 @@ function resetGachaVisual(){
 }
 function rarityClass(c){return c.rarity==='UR'?'biz-ur':c.rarity==='SSR'?'biz-ssr':c.rarity==='SR'?'biz-sr':'biz-r'}
 function rarityColor(c){return c.rarity==='UR'?'#ffd45c':c.rarity==='SSR'?'#b58cff':c.rarity==='SR'?'#62baff':'#d8e2f5'}
-function ensureCinema(){
-  let o=document.getElementById('cinema');
-  if(o)return o;
-  const tpl=document.getElementById('cinemaTemplate');
-  if(!tpl)return null;
-  document.body.appendChild(tpl.content.cloneNode(true));
-  return document.getElementById('cinema');
-}
 function startCinema(num){
-  const o=ensureCinema();
-  if(!o){setBusy(false);toast('演出画面を読み込めませんでした。');return;}
+  const o=document.getElementById('cinema');
   try{
     clearCinemaTimers();
-    cinemaMode=num; cinemaResult=null; cinemaStage=0; openReady=false;
+    cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
     resetGachaVisual();
-    o.className='cinema cinema-active show css-flow';
-    o.style.setProperty('display','block','important');
-    o.style.setProperty('visibility','visible','important');
-    o.style.setProperty('pointer-events','auto','important');
+    o.className='cinema';
+    o.style.setProperty('display','block','important');o.style.setProperty('visibility','visible','important');o.style.setProperty('pointer-events','auto','important');
+    o.classList.add('show');
     setScene('city');
-    const b=document.getElementById('cProgressBar'); if(b){b.style.width='0%';}
-    const t=document.getElementById('cTime'); if(t){t.textContent='演出進行中';}
+    document.getElementById('cProgressBar').style.width='0%';
+    document.getElementById('cTime').textContent='00.0 / 12.0';
     initAudio();
-    if(soundOn){tone(120,.22,'triangle',.045);playMachineStart();playBgm();}
+    if(soundOn){ tone(120,.22,'triangle',.045); playMachineStart(); playBgm(); }
     if(num===10) prepareCandidates(); else cinemaResult=weighted();
     setBusy(true);
-    const pc=document.getElementById('physicalCapsule'); if(pc)pc.classList.add('ready');
-    const gm=document.getElementById('gachaMachine'); if(gm)gm.classList.remove('hidden');
-    const oh=document.getElementById('openHatch');
-    if(oh){
-      oh.classList.remove('ready');
-      oh.classList.add('css-flow-ready');
-      oh.textContent=num===10?'TAP TO OPEN 10 CAPSULES':'TAP TO OPEN';
-    }
-    // CSS is the master clock. animationend is used only to enable the final tap.
-    o.addEventListener('animationend',function onFlow(e){
-      if(e.animationName!=='hatchCssFlow')return;
-      o.removeEventListener('animationend',onFlow);
-      if(!o.classList.contains('show'))return;
-      openReady=true;
-      const btn=document.getElementById('openHatch');
-      // The CSS flow already makes the button visible and clickable.
-      if(cinemaResult) { try { rarityAnticipation(cinemaResult); } catch(err){} }
-      try{playRotor();}catch(err){}
+    requestAnimationFrame(()=>{
+      const gm=document.getElementById('gachaMachine'), pc=document.getElementById('physicalCapsule');
+      if(gm) gm.classList.remove('hidden');
+      if(pc) pc.classList.add('ready');
     });
+    cinemaTimer=setInterval(updateCinemaClock,50);
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(1),1200));
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(2),2800));
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(3),5000));
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(4),7000));
+    cinemaTimeouts.push(setTimeout(()=>gachaStage(5),8500));
+    cinemaTimeouts.push(setTimeout(()=>{if(!openReady && o.classList.contains('show')) gachaStage(5)},9800));
   }catch(err){
     console.error('Gacha start error:',err);
     clearCinemaTimers();
-    o.classList.remove('show','cinema-active','css-flow');
-    o.style.setProperty('display','none','important');
+    o.classList.remove('show');
     setBusy(false);
-    try{toast('ガチャ演出を開始できませんでした。もう一度お試しください')}catch(e){}
+    try{toast('ガチャ演出を開始できませんでした。もう一度お試しください。')}catch(e){}
   }
 }
 
@@ -519,21 +510,21 @@ function gachaRevealFinal(){
  const c=cinemaResult;img.src=c.img;img.classList.add('show','hatch-fly');name.textContent=c.name+'、採用。';name.classList.add('show','hatch-name');sub.textContent=c.rarity+'  /  '+c.role.toUpperCase();sub.classList.add('show');playReveal(c);setTimeout(()=>finishCinema(false),1450)
 }
 function finishCinema(skipped){
- clearCinemaTimers();const o=document.getElementById('cinema');if(!o){setBusy(false);return;}
- if(skipped){o.classList.remove('show','cinema-active');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');openReady=false;}
+ clearCinemaTimers();const o=document.getElementById('cinema');
+ if(skipped){o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');openReady=false;}
  if(skipped){applyCinemaResult();setBusy(false);return}
  updateCinemaClock();
- if(cinemaMode===10){const got=cinemaGot||[];got.forEach(x=>{x.isNew=!owned[x.c.id];owned[x.c.id]=true;addXp(x.c,x.isNew?10:18)});pulls+=10;save();update();setTimeout(()=>{o.classList.remove('show','cinema-active');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');showTenResults(got);setBusy(false)},120);return}
+ if(cinemaMode===10){const got=cinemaGot||[];got.forEach(x=>{x.isNew=!owned[x.c.id];owned[x.c.id]=true;addXp(x.c,x.isNew?10:18)});pulls+=10;save();update();setTimeout(()=>{o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');showTenResults(got);setBusy(false)},120);return}
  const c=cinemaResult,isNew=!owned[c.id];pulls++;owned[c.id]=true;addXp(c,isNew?10:18);save();update();
  document.getElementById('cImg').src=c.img;document.getElementById('cRarity').textContent=c.rarity+' / '+c.role;document.getElementById('cName').textContent=isNew?c.name+'、入社。':c.name+'、再登場。';document.getElementById('cMsg').textContent=isNew?'採用決定。チームへの配属が承認されました。':`実績を確認。さらに経験値を獲得しました。`;document.getElementById('cStamp').textContent=c.rarity==='UR'?'APPOINTED':c.rarity==='SSR'?'APPROVED':'ASSIGNED';
- setTimeout(()=>{o.classList.remove('show','cinema-active');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`);setBusy(false)},80)
+ setTimeout(()=>{o.classList.remove('show');o.style.setProperty('display','none','important');o.style.setProperty('visibility','hidden','important');o.style.setProperty('pointer-events','none','important');show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`);setBusy(false)},80)
 }
 function applyCinemaResult(){const c=cinemaResult;if(!c)return;const isNew=!owned[c.id];pulls++;owned[c.id]=true;addXp(c,isNew?10:18);save();update();playReveal(c);show(c,isNew);toast(isNew?`✨ NEW！ ${c.name} が入社！`:`${c.name} を獲得！ 経験値+18`)}
 
 function showTenResults(got){const grid=document.getElementById('tenGrid');grid.innerHTML=got.map(x=>`<div class="ten-card"><img src="${x.c.img}"><b>${x.c.rarity} ${x.c.name}</b>${x.isNew?'<div class="ten-new">✨ NEW!</div>':''}<small>${x.c.role}</small></div>`).join('');document.getElementById('modal').classList.add('show');[...grid.children].forEach((el,i)=>setTimeout(()=>el.classList.add('reveal'),i*120));}
 
 function closeModal(){document.getElementById('modal').classList.remove('show')}function openDetail(id){const c=chars.find(x=>x.id===id);document.getElementById('detailImg').src=c.img;document.getElementById('detailRole').textContent=owned[id]?`${c.role} · ${c.rarity}`:'未獲得';document.getElementById('detailName').textContent=owned[id]?`${c.name} / Lv.${levels[id].lv}`:'？？？';document.getElementById('detailDesc').textContent=owned[id]?c.desc:'この社員はまだガチャから獲得していません。';document.getElementById('detailQuote').textContent=owned[id]?`${c.quote}　Lv.${levels[id].lv} / EXP ${levels[id].xp}/100 / ${skillNames[id]} ${levels[id].skill}`:'ガチャを回して入社してもらおう。';document.getElementById('detail').classList.add('show')}function closeDetail(){document.getElementById('detail').classList.remove('show')}function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1800)}
-// V6.1: cinematic DOM is created lazily from a template only after a pull.
+// Ver.4.8: initialize only after the full DOM (including the cinematic layer) exists.
 document.addEventListener('DOMContentLoaded',()=>{
   try{
     const cinema=document.getElementById('cinema');
@@ -548,23 +539,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     save();
   }catch(e){console.error('AI Employee Gacha init error',e)}
 });
-function hardResetCinema(){
-  const cinema=document.getElementById('cinema');
-  if(!cinema)return;
-  clearCinemaTimers();
-  cinema.classList.remove('show','cinema-active','hatch-open','door-phase','scene-purple','scene-gold','scene-ur','rarity-ur','rarity-ssr','rarity-sr');
-  cinema.style.setProperty('display','none','important');
-  cinema.style.setProperty('visibility','hidden','important');
-  cinema.style.setProperty('pointer-events','none','important');
-  const open=document.getElementById('openHatch');
-  if(open)open.classList.remove('ready');
-  openReady=false;
-}
-window.addEventListener('DOMContentLoaded',hardResetCinema);
-window.addEventListener('load',hardResetCinema);
-window.addEventListener('pageshow',hardResetCinema);
-window.addEventListener('pagehide',hardResetCinema);
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')hardResetCinema()});
 </script>
 
 </body></html>
