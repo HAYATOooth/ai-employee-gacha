@@ -420,70 +420,82 @@ function rarityClass(c){return c.rarity==='UR'?'biz-ur':c.rarity==='SSR'?'biz-ss
 function rarityColor(c){return c.rarity==='UR'?'#ffd45c':c.rarity==='SSR'?'#b58cff':c.rarity==='SR'?'#62baff':'#d8e2f5'}
 function startCinema(num){
   const o=document.getElementById('cinema');
-  if(!o)return;
-  clearCinemaTimers();
-  cinemaMode=num; cinemaResult=null; cinemaStart=performance.now(); openReady=false;
-  try{resetGachaVisual();}catch(e){console.warn('reset visual skipped',e)}
+  if(!o){setBusy(false);return;}
 
-  // IMPORTANT: the cinematic must never depend on requestAnimationFrame or audio.
-  // Mobile browsers can throttle/interrupt both.  Use a simple timer state machine.
+  // V7.8: visual-only emergency flow.
+  // Do NOT call audio, video, requestAnimationFrame, or complex stage code here.
+  // The previous version was reaching stage 1 but the main thread could be held
+  // by optional effects, so the timers never advanced on some mobile browsers.
+  clearCinemaTimers();
+  cinemaMode=num; cinemaResult=null; cinemaStart=Date.now(); openReady=false;
+  if(num===10) prepareCandidates(); else cinemaResult=weighted();
+  setBusy(true);
+
+  // Reset the cinematic layer synchronously.
   o.className='cinema show';
   o.style.setProperty('display','block','important');
   o.style.setProperty('visibility','visible','important');
   o.style.setProperty('pointer-events','auto','important');
+  try{resetGachaVisual();}catch(e){}
+  const machine=document.getElementById('gachaMachine');
+  const capsule=document.getElementById('physicalCapsule');
+  const rotor=document.getElementById('rotor');
+  const open=document.getElementById('openHatch');
+  if(machine)machine.classList.remove('hidden');
+  if(capsule)capsule.className='physical-capsule';
+  if(rotor)rotor.className='rotor';
+  if(open){open.className='open-hatch';open.textContent=num===10?'TAP TO OPEN 10 CAPSULES':'TAP TO OPEN';open.classList.remove('ready','ur');}
 
-  try{setScene('city');}catch(e){console.warn('scene init skipped',e)}
   const bar=document.getElementById('cProgressBar'), tm=document.getElementById('cTime');
   if(bar)bar.style.width='0%';
-  if(tm)tm.textContent='00.0 / 12.0';
-  if(num===10)prepareCandidates(); else cinemaResult=weighted();
-  setBusy(true);
+  if(tm)tm.textContent='0.0 / 12.0';
 
-  let stageDone=0;
-  const safeStage=(n)=>{
-    if(!o.classList.contains('show') || n<=stageDone)return;
-    stageDone=n;
-    try{
-      gachaStage(n);
-    }catch(err){
-      console.error('Gacha stage '+n+' error:',err);
-      // If an optional visual/audio component fails, keep the flow alive.
-      if(n<5){
-        try{gachaStage(5)}catch(e){
-          openReady=true;
-          const b=document.getElementById('openHatch');
-          if(b)b.classList.add('ready');
-        }
-        stageDone=5;
-      }
-    }
+  // Stage 1 is deliberately DOM-only. This proves the flow can advance.
+  if(rotor)rotor.classList.add('spin');
+
+  const go=(fn,delay)=>{
+    cinemaTimeouts.push(setTimeout(()=>{
+      if(!o.classList.contains('show'))return;
+      try{fn();}catch(e){console.warn('cinema step skipped',e)}
+    },delay));
   };
 
-  // First visual transition is deliberately immediate.
-  safeStage(1);
+  go(()=>{
+    if(capsule){capsule.classList.remove('spin');capsule.classList.add('spin');}
+    if(rotor)rotor.classList.add('fast');
+    const neon=document.querySelector('.gacha-neon');
+    if(neon)neon.classList.add('on');
+  },700);
 
-  // Timer-only progression. No RAF, no video event, no audio dependency.
-  cinemaTimeouts.push(setTimeout(()=>safeStage(2),900));
-  cinemaTimeouts.push(setTimeout(()=>safeStage(3),2100));
-  cinemaTimeouts.push(setTimeout(()=>safeStage(4),3500));
-  cinemaTimeouts.push(setTimeout(()=>safeStage(5),5000));
-  // Absolute watchdog: the OPEN button must appear even if a stage fails.
-  cinemaTimeouts.push(setTimeout(()=>{
-    if(o.classList.contains('show') && !openReady){
-      try{safeStage(5)}catch(e){}
-      openReady=true;
-      const b=document.getElementById('openHatch');
-      if(b){b.classList.add('ready');b.style.setProperty('opacity','1','important');b.style.setProperty('pointer-events','auto','important');}
+  go(()=>{
+    const c=cinemaMode===10?(cinemaGot?.find(x=>x.c.rarity==='UR')?.c||cinemaGot?.find(x=>x.c.rarity==='SSR')?.c||cinemaGot?.[0]?.c):cinemaResult;
+    if(c){
+      const rc=rarityColor(c),rar=document.getElementById('gachaRarity');
+      if(rar){rar.textContent=c.rarity;rar.style.color=rc;rar.style.textShadow='0 0 28px '+rc;rar.classList.add('show');}
+      o.classList.add(c.rarity==='UR'?'rarity-ur':c.rarity==='SSR'?'rarity-ssr':'rarity-sr');
+      if(capsule){capsule.classList.remove('spin');capsule.classList.add('ready');}
     }
-  },6500));
+  },1700);
 
-  cinemaTimer=setInterval(updateCinemaClock,50);
+  go(()=>{
+    const c=cinemaMode===10?(cinemaGot?.find(x=>x.c.rarity==='UR')?.c||cinemaGot?.[0]?.c):cinemaResult;
+    if(c){
+      o.classList.add('hatch-ready');
+      const open=document.getElementById('openHatch');
+      if(open){open.classList.add('ready');if(c.rarity==='UR')open.classList.add('ur');}
+      openReady=true;
+    }
+  },3000);
 
-  // Audio is optional. It is started LAST and can never block the visual flow.
-  try{
-    initAudio();
-    if(soundOn){tone(120,.22,'triangle',.045);playMachineStart();playBgm();}
-  }catch(e){console.warn('audio skipped',e)}
+  // Hard watchdog. Even if every optional effect above fails, the user gets
+  // a working OPEN button.
+  go(()=>{
+    openReady=true;
+    const open=document.getElementById('openHatch');
+    if(open){open.classList.add('ready');open.style.setProperty('display','block','important');open.style.setProperty('opacity','1','important');open.style.setProperty('pointer-events','auto','important');}
+  },4200);
+
+  cinemaTimer=setInterval(updateCinemaClock,100);
 }
 
 function updateCinemaClock(){const o=document.getElementById('cinema');if(!o||!o.classList.contains('show'))return;const elapsed=Math.max(0,Math.min(12000,performance.now()-cinemaStart));const b=document.getElementById('cProgressBar'),t=document.getElementById('cTime');if(b)b.style.width=(elapsed/12000*100)+'%';if(t)t.textContent=(elapsed/1000).toFixed(1)+' / 12.0'}
