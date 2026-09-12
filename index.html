@@ -444,7 +444,14 @@ function startCinema(num){
   if(machine)machine.classList.remove('hidden');
   if(capsule)capsule.className='physical-capsule';
   if(rotor)rotor.className='rotor';
-  if(open){open.className='open-hatch';open.textContent=num===10?'TAP TO OPEN 10 CAPSULES':'TAP TO OPEN';open.classList.remove('ready','ur');}
+  if(open){
+    open.className='open-hatch ready';
+    open.textContent=num===10?'TAP TO OPEN 10 CAPSULES':'TAP TO OPEN';
+    open.classList.remove('ur');
+  }
+  // V7.9: do not wait for any animation/timer to make the next action available.
+  // The cinematic screen is already visible at this point, so make OPEN usable immediately.
+  openReady=true;
 
   const bar=document.getElementById('cProgressBar'), tm=document.getElementById('cTime');
   if(bar)bar.style.width='0%';
