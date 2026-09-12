@@ -659,3 +659,47 @@ document.addEventListener('DOMContentLoaded',()=>{
 })();
 </script>
 </body></html>
+<script>
+// Ver.7.4: ultra-safe launcher. Avoids fragile startup dependencies.
+(function(){
+  const oldStart = window.startCinema;
+  window.startCinema = function(num){
+    const o=document.getElementById('cinema');
+    if(!o) { console.error('cinema element missing'); try{toast('演出画面が見つかりません。index.htmlを確認してください。')}catch(e){}; return; }
+    try{
+      if(typeof clearCinemaTimers==='function') clearCinemaTimers();
+      cinemaMode=num;
+      cinemaStart=performance.now();
+      openReady=false;
+      cinemaResult = (num===10) ? null : weighted();
+      if(num===10 && typeof prepareCandidates==='function') prepareCandidates();
+      o.className='cinema g7 show';
+      o.style.display='block';
+      o.style.visibility='visible';
+      o.style.pointerEvents='auto';
+      const bar=document.getElementById('cProgressBar'); if(bar)bar.style.width='0%';
+      const tm=document.getElementById('cTime'); if(tm)tm.textContent='00.0 / 12.0';
+      const gm=document.getElementById('gachaMachine'); if(gm)gm.classList.remove('hidden');
+      const pc=document.getElementById('physicalCapsule'); if(pc){pc.className='physical-capsule';pc.style.opacity='1';}
+      const btn=document.getElementById('openHatch'); if(btn){btn.className='open-hatch';btn.textContent='TAP TO OPEN';}
+      if(typeof initAudio==='function') initAudio();
+      if(soundOn && typeof playBgm==='function') { try{playBgm()}catch(e){} }
+      cinemaTimer=setInterval(function(){try{updateCinemaClock()}catch(e){}},50);
+      const steps=[
+        [250,1],[1050,2],[2450,3],[3800,4],[4650,5]
+      ];
+      cinemaTimeouts=cinemaTimeouts||[];
+      steps.forEach(([ms,stage])=>cinemaTimeouts.push(setTimeout(()=>{try{gachaStage(stage)}catch(e){console.error('stage',stage,e)}},ms)));
+    }catch(err){
+      console.error('V7.4 start error',err);
+      o.className='cinema show';o.style.display='block';o.style.visibility='visible';o.style.pointerEvents='auto';
+      try{msg('演出を準備中…');}catch(e){}
+      setTimeout(()=>{try{gachaStage(1)}catch(e){}},200);
+      setTimeout(()=>{try{gachaStage(2)}catch(e){}},1200);
+      setTimeout(()=>{try{gachaStage(3)}catch(e){}},2600);
+      setTimeout(()=>{try{gachaStage(4)}catch(e){}},4000);
+      setTimeout(()=>{try{gachaStage(5)}catch(e){}},5200);
+    }
+  };
+})();
+</script>
